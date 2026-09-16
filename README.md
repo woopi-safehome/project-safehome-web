@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SafeHome Web
 
-## Getting Started
+등기부등본 분석 서비스의 **웹 프론트** (Next.js App Router).
+로그인 없이 분석할 수 있고, 로그인하면 분석 이력이 남는다.
 
-First, run the development server:
+> **범위**: `project-safehome-web/**`
+> **여기 없는 것**: 컴포넌트·함수 이름과 라이브러리 버전 — 코드와 `package.json` 이 답한다.
+> 서버 응답 형식도 여기 없다. 원본은 api 저장소가 갖는다.
+
+---
+
+## 실행
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # 개발 서버 (http://localhost:3000)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 검증
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run lint     # 구조 — 의존 방향 위반을 잡는다
+npm run build    # 타입 — 컴파일과 정적 생성
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**둘 다 돌린다.** lint 는 타입을 보지 않고 build 는 import 경계를 보지 않아서, 한쪽만으로는 다른 쪽이 깨진 걸 모른다.
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 구조
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+src/
+├── app/        라우팅과 조립만 한다. 화면 로직을 두지 않는다
+├── features/   기능 하나가 폴더 하나. 그 기능의 컴포넌트·상태·서버 호출을 함께 둔다
+└── shared/     기능들이 함께 쓰는 것 — 서버 통신, 설정, 공용 UI
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**의존은 `app → features → shared` 한 방향뿐이다.**
 
-## Deploy on Vercel
+- `shared` 는 `features`·`app` 을 모른다
+- 기능끼리 가로로 참조하지 않는다 — 같은 기능 안은 상대경로, 기능 사이에 공유할 것은 `shared` 로 올린다
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**이 규칙은 ESLint 가 막는다.** 어기면 lint 가 이유와 함께 실패하므로 외울 필요가 없다.
+규칙을 바꾸려면 `eslint.config.mjs` 의 경계 설정을 고친다.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 서버 통신
+
+**모든 서버 호출은 `shared/api` 한 곳을 지난다.** 화면에서 직접 `fetch` 하지 않는다 —
+흩어지면 인증·봉투 처리가 제각각이 되고 계약이 바뀔 때 빠뜨리는 곳이 생긴다.
+
+**엔드포인트 스펙의 원본은 api 저장소 README 의 계약 절이다.** 이쪽에서 형식을 정하지 않는다.
+모르는 필드가 와도 무시하고 동작해야 한다 — 서버가 이 앱보다 먼저 배포된다.
+
+---
+
+## 환경 변수
+
+브라우저까지 내려가는 값이므로 **전부 공개된 것으로 다룬다.** 서버 비밀값을 두지 않는다.
+
+| 변수 | 쓰임 |
+|---|---|
+| `NEXT_PUBLIC_API_URL` | 백엔드 주소 (없으면 로컬 기본값) |
+
+---
+
+## 문서 지도
+
+| 알고 싶은 것 | 문서 |
+|---|---|
+| AI 작업 지침 | [`CLAUDE.md`](CLAUDE.md) |
+| 이 Next.js 버전의 주의사항 | [`AGENTS.md`](AGENTS.md) · `node_modules/next/dist/docs/` |

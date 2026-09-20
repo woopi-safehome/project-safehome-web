@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { DeedUploadForm } from "@/features/analysis/components/DeedUploadForm";
 
 /**
@@ -14,6 +15,10 @@ export default function Home() {
       </header>
 
       <DeedUploadForm />
+
+      <Link href="/history" className="text-xs underline underline-offset-4">
+        지난 분석 이력 보기
+      </Link>
     </main>
   );
 }

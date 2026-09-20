@@ -13,6 +13,17 @@ export type AnalysisStep = (typeof ANALYSIS_STEP)[number];
 export const SAFETY_LEVEL = ["SAFE", "CAUTION", "DANGER"] as const;
 export type SafetyLevel = (typeof SAFETY_LEVEL)[number];
 
+/** 아래 셋은 분석 결과 안에 들어오는 값이라 원본이 ai-api 저장소의 계약 절이다. */
+
+export const CHECKLIST_STATUS = ["양호", "주의", "위험"] as const;
+export type ChecklistStatus = (typeof CHECKLIST_STATUS)[number];
+
+export const RECOMMENDATION_PRIORITY = ["필수", "권장", "참고"] as const;
+export type RecommendationPriority = (typeof RECOMMENDATION_PRIORITY)[number];
+
+export const RISK_LEVEL = ["낮음", "보통", "높음"] as const;
+export type RiskLevel = (typeof RISK_LEVEL)[number];
+
 export type LeaseType = "전세" | "월세";
 
 /** 모든 JSON 응답은 이 봉투에 감싸인다. `type` 이 판별 필드다. 단 스트리밍은 예외다. */

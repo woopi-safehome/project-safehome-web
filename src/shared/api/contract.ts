@@ -26,6 +26,15 @@ export type RiskLevel = (typeof RISK_LEVEL)[number];
 
 export type LeaseType = "전세" | "월세";
 
+/** 화면이 따로 다루는 에러 코드. 전체 목록은 api 저장소의 계약 절이 갖는다. */
+export const ERROR_CODE = {
+  unauthorized: "UNAUTHORIZED",
+  notFound: "NOT_FOUND",
+  dailyLimitExceeded: "DAILY_LIMIT_EXCEEDED",
+  /** 서버에 닿지도 못한 경우. 서버가 정한 값이 아니라 통신 계층이 붙인다. */
+  network: "NETWORK_ERROR",
+} as const;
+
 /** 모든 JSON 응답은 이 봉투에 감싸인다. `type` 이 판별 필드다. 단 스트리밍은 예외다. */
 export type ApiEnvelope<T> =
   | { type: "success"; data: T; message: string; pagination: Pagination | null }

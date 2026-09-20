@@ -91,6 +91,31 @@ describe("DeedUploadForm", () => {
     expect((await screen.findByRole("alert")).textContent).toBe("인증이 필요합니다.");
   });
 
+  it("하루 제한에 걸리면 언제 다시 되는지 알린다", async () => {
+    // 다시 눌러도 같다. 무엇을 하면 되는지 알려 주지 않으면 계속 누른다.
+    uploadMock.mockRejectedValue(
+      new ApiError("DAILY_LIMIT_EXCEEDED", "오늘 분석 가능한 횟수를 모두 사용했습니다.", 429),
+    );
+    const { container } = render(<DeedUploadForm />);
+
+    submitWith(container);
+
+    expect((await screen.findByRole("alert")).textContent).toBe(
+      "오늘 분석 가능한 횟수를 모두 사용했습니다.",
+    );
+    expect(screen.getByText("내일 다시 분석할 수 있습니다.")).toBeTruthy();
+  });
+
+  it("다른 실패에는 내일 안내를 붙이지 않는다", async () => {
+    uploadMock.mockRejectedValue(new ApiError("NETWORK_ERROR", "서버에 연결할 수 없습니다.", 0));
+    const { container } = render(<DeedUploadForm />);
+
+    submitWith(container);
+
+    await screen.findByRole("alert");
+    expect(screen.queryByText("내일 다시 분석할 수 있습니다.")).toBeNull();
+  });
+
   it("업로드 중에는 다시 제출할 수 없다", async () => {
     uploadMock.mockReturnValue(new Promise(() => {})); // 끝나지 않는 업로드
     const { container } = render(<DeedUploadForm />);

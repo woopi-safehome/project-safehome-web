@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import type { LeaseType } from "@/shared/api/contract";
+import { ERROR_CODE, type LeaseType } from "@/shared/api/contract";
 import { ApiError } from "@/shared/api/client";
 import { uploadDeed } from "../api";
 
@@ -15,6 +15,7 @@ export function DeedUploadForm() {
   const [leaseType, setLeaseType] = useState<LeaseType | null>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [limited, setLimited] = useState(false);
   const router = useRouter();
 
   const ready = file !== null && !uploading;
@@ -24,6 +25,7 @@ export function DeedUploadForm() {
 
     setUploading(true);
     setError(null);
+    setLimited(false);
     try {
       const jobId = await uploadDeed(file, leaseType);
       // 업로드가 끝나도 분석은 이제 시작이다. 진행 상황은 저쪽에서 구독한다.
@@ -31,6 +33,8 @@ export function DeedUploadForm() {
     } catch (e) {
       // 서버가 준 문구를 그대로 쓴다. 판정도 안내도 서버가 정한다.
       setError(e instanceof ApiError ? e.message : "업로드에 실패했습니다.");
+      // 하루 제한은 다시 눌러도 같다. 무엇을 하면 되는지 따로 알린다.
+      setLimited(e instanceof ApiError && e.code === ERROR_CODE.dailyLimitExceeded);
       setUploading(false);
     }
   }
@@ -96,6 +100,13 @@ export function DeedUploadForm() {
       {error !== null && (
         <p role="alert" className="text-center text-xs text-red-600 dark:text-red-400">
           {error}
+        </p>
+      )}
+
+      {limited && (
+        // 다시 눌러도 같다. 언제 풀리는지만 알려 준다.
+        <p className="text-center text-xs text-black/50 dark:text-white/50">
+          내일 다시 분석할 수 있습니다.
         </p>
       )}
 

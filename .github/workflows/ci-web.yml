@@ -1,0 +1,35 @@
+name: CI (Web)
+
+on:
+  push:
+    branches: [develop]
+  pull_request:
+    branches: [develop]
+
+jobs:
+  verify:
+    name: Lint, Test & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          # 로컬에서 쓰는 버전이자 next 가 요구하는 하한(20.9)을 넘는다.
+          node-version: '22'
+          cache: npm
+
+      # 잠금 파일 그대로 설치한다. install 과 달리 잠금 파일을 고쳐 쓰지 않으므로,
+      # 잠금 파일이 낡으면 조용히 넘어가지 않고 여기서 실패한다.
+      - name: Install dependencies
+        run: npm ci
+
+      # 로컬과 같은 파일을 실행한다 — lint, test, build.
+      # 명령이 다르면 로컬 통과가 CI 통과를 뜻하지 않는다.
+      # 설치는 이 파일이 하지 않는다. npm ci 는 node_modules 를 지우고 다시 받으므로
+      # 개발 중에 매번 돌리기에는 무겁다.
+      - name: Verify
+        run: bash scripts/verify.sh

@@ -22,5 +22,6 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  /* 레이아웃이 불러오는 글꼴을 쓴다. 여기서 Arial 로 덮으면 불러온 글꼴이 버려진다. */
+  font-family: var(--font-sans), system-ui, sans-serif;
 }

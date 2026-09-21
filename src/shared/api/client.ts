@@ -6,9 +6,12 @@ import type { ApiEnvelope } from "./contract";
  * 서버로 나가는 유일한 통로. 화면에서 직접 fetch 하지 않는다.
  * 여기 모아 두지 않으면 인증 헤더와 봉투 처리가 흩어지고, 계약이 바뀔 때 빠뜨리는 곳이 생긴다.
  *
- * **쿠키를 쓰지 않는다.** 인증은 Bearer 헤더 하나뿐이라 쿠키가 실을 것이 없고,
- * 서버 CORS 설정이 `allowCredentials` 를 켜 두지 않아 `credentials: "include"` 를 보내면
- * 브라우저가 교차 출처 응답을 통째로 막는다. 개발 중에는 웹(3000)과 서버(8080)가 늘 교차 출처다.
+ * **회원 인증은 Bearer 헤더, 비회원의 주인은 쿠키다.** 서버가 비회원에게 익명 쿠키를 발급하고,
+ * 그 쿠키를 함께 보낸 요청만 자기 분석을 볼 수 있다. 쿠키는 스크립트가 읽지 못하므로(`HttpOnly`)
+ * 이쪽에서 꺼내 붙일 수 없고, **브라우저가 알아서 싣도록 같은 출처로 보내야 한다.**
+ *
+ * 그래서 요청은 이 앱의 주소로 보내고, `/api/*` 는 이 앱이 백엔드로 넘긴다(`next.config.ts`).
+ * 백엔드를 직접 부르면 교차 출처가 되어 쿠키가 빠지고, 비회원은 자기 결과를 볼 수 없게 된다.
  */
 
 export class ApiError extends Error {
@@ -40,7 +43,8 @@ async function send(path: string, init: RequestInit | undefined, accessToken: st
   if (accessToken !== null) headers.set("Authorization", `Bearer ${accessToken}`);
 
   try {
-    return await fetch(url(path), { ...init, headers });
+    // 같은 출처면 이것이 기본값이지만 적어 둔다 — 빠뜨린 것과 정한 것을 구분하기 위해서다.
+    return await fetch(url(path), { ...init, headers, credentials: "same-origin" });
   } catch {
     throw networkError();
   }

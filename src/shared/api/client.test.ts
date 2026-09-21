@@ -107,14 +107,23 @@ describe("인증", () => {
     expect(headers.get("Authorization")).toBe("Bearer a1");
   });
 
-  it("쿠키를 보내지 않는다", async () => {
-    // 서버 CORS 가 allowCredentials 를 켜 두지 않아, 쿠키를 실으면
-    // 브라우저가 교차 출처 응답을 통째로 막는다. 인증은 헤더로만 한다.
+  it("같은 출처로 보내 쿠키가 실리게 한다", async () => {
+    // 비회원 분석의 주인은 서버가 발급한 익명 쿠키다. 스크립트가 읽지 못하므로(HttpOnly)
+    // 붙여 보낼 수 없고, 브라우저가 알아서 싣도록 같은 출처로 보내야 한다.
     const fetchFn = stubFetch({ "/api/deed/jobs": [success(null)] });
 
     await apiFetch("/api/deed/jobs");
 
-    expect(fetchFn.mock.calls[0][1].credentials).toBeUndefined();
+    expect(fetchFn.mock.calls[0][1].credentials).toBe("same-origin");
+  });
+
+  it("백엔드 주소를 붙이지 않고 이 앱의 경로로 부른다", async () => {
+    // 절대 주소로 부르면 교차 출처가 되어 쿠키가 빠진다. /api/* 는 이 앱이 백엔드로 넘긴다.
+    const fetchFn = stubFetch({ "/api/deed/jobs": [success(null)] });
+
+    await apiFetch("/api/deed/jobs");
+
+    expect(fetchFn.mock.calls[0][0]).toBe("/api/deed/jobs");
   });
 
   it("401 이면 토큰을 갱신하고 한 번만 다시 보낸다", async () => {

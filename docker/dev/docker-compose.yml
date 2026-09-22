@@ -12,12 +12,8 @@ services:
     networks:
       - safehome-net
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/ || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 20s
+    # 헬스체크는 여기 두지 않는다. 이미지의 HEALTHCHECK 를 그대로 쓴다 —
+    # 여기에 또 적으면 이미지 쪽을 덮어써, CI 가 검사한 것과 서버가 보는 것이 달라진다.
 
 networks:
   safehome-net:

@@ -79,17 +79,23 @@ jobs:
           build-args: |
             NEXT_PUBLIC_KAKAO_JS_KEY=${{ secrets.NEXT_PUBLIC_KAKAO_JS_KEY }}
 
+      # 배포가 기다리는 것과 **같은 신호**를 여기서 먼저 확인한다.
+      # 밖에서 포트만 찔러 보면 화면이 응답해도 이미지 안의 헬스체크가 틀린 것을 놓친다 —
+      # 그러면 배포가 서버에서 unhealthy 로 죽고, 원인은 그때서야 보인다.
       - name: Smoke test
         run: |
-          docker run -d --name smoke -p 3000:3000 safehome-web:smoke
+          docker run -d --name smoke safehome-web:smoke
           for _ in $(seq 1 30); do
-            if curl -fsS -o /dev/null http://localhost:3000/; then
-              echo "기동 확인: 화면이 응답한다"
-              exit 0
-            fi
-            sleep 2
+            STATUS=$(docker inspect -f '{{.State.Health.Status}}' smoke 2>/dev/null || echo missing)
+            case "$STATUS" in
+              healthy)  echo "기동 확인: healthy"; exit 0 ;;
+              starting) sleep 3 ;;
+              *)        echo "기동 실패 — 상태: $STATUS"
+                        docker logs smoke 2>&1 || true
+                        exit 1 ;;
+            esac
           done
-          echo "기동 실패 — 컨테이너 로그"
+          echo "기동 확인 시간 초과 — 마지막 상태: $STATUS"
           docker logs smoke 2>&1 || true
           exit 1
 

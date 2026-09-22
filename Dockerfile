@@ -37,4 +37,15 @@ COPY --from=builder --chown=appuser:appgroup /app/public ./public
 USER appuser
 
 EXPOSE 3000
+
+# 배포가 기다리는 신호. **compose 가 아니라 이미지에 둔다** — compose 에만 두면
+# 이 명령은 서버에서 처음 돌 때까지 아무도 실행해 보지 않고, 틀려도 배포 중에야 드러난다.
+# 여기 있으면 CI 가 이미지를 띄워 같은 명령으로 검사할 수 있다.
+#
+# node 로 확인하는 이유: wget·curl 이 이 이미지에 있다는 보장이 없다. node 는 반드시 있다.
+# 주소를 127.0.0.1 로 박는 이유: `localhost` 는 ::1 로 먼저 풀릴 수 있는데
+# 서버는 0.0.0.0(IPv4)에만 묶여 있어 연결이 거부된다.
+HEALTHCHECK --interval=10s --timeout=5s --start-period=30s --retries=3 \
+  CMD node -e "fetch('http://127.0.0.1:3000/').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
+
 CMD ["node", "server.js"]

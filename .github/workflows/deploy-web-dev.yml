@@ -1,0 +1,166 @@
+name: Deploy Web (Dev)
+
+on:
+  push:
+    branches: [develop]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository_owner }}/safehome-web
+  DEPLOY_PATH: /home/woopi/project/safehome/web
+
+jobs:
+  verify:
+    name: Verify
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          # 로컬에서 쓰는 버전이자 next 가 요구하는 하한(20.9)을 넘는다.
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # 로컬과 같은 파일을 실행한다. 명령이 다르면 로컬 통과가 CI 통과를 뜻하지 않는다.
+      # CI (Web) 과 겹치지만 여기서 다시 돌린다 — 배포가 검증을 통과해야 시작한다는 사실이
+      # 이 파일만 봐도 보여야 하고, 다른 워크플로의 성공에 기대면 조용히 끊어진다.
+      - name: Verify
+        run: bash scripts/verify.sh
+
+  build-and-push:
+    name: Build & Push Docker Image
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=dev
+            type=sha,prefix=dev-,format=short
+
+      # 올리기 전에 실제로 띄워 본다. 검증은 이미지를 보지 않으므로,
+      # standalone 산출물을 잘못 모아 서버가 뜨지 못하는 실패는 여기서만 걸린다.
+      - name: Build image for smoke test
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          load: true
+          tags: safehome-web:smoke
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            NEXT_PUBLIC_KAKAO_JS_KEY=${{ secrets.NEXT_PUBLIC_KAKAO_JS_KEY }}
+
+      - name: Smoke test
+        run: |
+          docker run -d --name smoke -p 3000:3000 safehome-web:smoke
+          for _ in $(seq 1 30); do
+            if curl -fsS -o /dev/null http://localhost:3000/; then
+              echo "기동 확인: 화면이 응답한다"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "기동 실패 — 컨테이너 로그"
+          docker logs smoke 2>&1 || true
+          exit 1
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            NEXT_PUBLIC_KAKAO_JS_KEY=${{ secrets.NEXT_PUBLIC_KAKAO_JS_KEY }}
+
+  deploy:
+    name: Deploy to Dev Server
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    environment: dev
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # nginx 설정도 함께 올린다. 설치는 root 가 필요해 여기서 하지 않는다 —
+      # 서버에 원본을 두어 사람이 옮길 수 있게만 한다. 설치 절차는 README 의 "배포" 절에 있다.
+      - name: Copy deploy files to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.DEV_SSH_HOST }}
+          username: ${{ secrets.DEV_SSH_USER }}
+          key: ${{ secrets.DEV_SSH_PRIVATE_KEY }}
+          port: ${{ secrets.DEV_SSH_PORT || 22 }}
+          source: "docker/dev/docker-compose.yml,docker/dev/nginx/"
+          target: ${{ env.DEPLOY_PATH }}
+          strip_components: 2
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEV_SSH_HOST }}
+          username: ${{ secrets.DEV_SSH_USER }}
+          key: ${{ secrets.DEV_SSH_PRIVATE_KEY }}
+          port: ${{ secrets.DEV_SSH_PORT || 22 }}
+          script: |
+            cd ${{ env.DEPLOY_PATH }}
+
+            echo "${{ secrets.GITHUB_TOKEN }}" | \
+              docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+            docker compose --env-file /home/woopi/project/safehome/env/.env_web pull safehome-web
+            docker compose --env-file /home/woopi/project/safehome/env/.env_web up -d safehome-web
+
+            # 기동 확인 — 배포 성공이 기동 성공을 뜻하도록 헬스 체크를 기다린다.
+            # 컨테이너를 띄우라는 지시만으로 끝내면 기동 실패가 초록으로 지나간다.
+            CONTAINER=safehome-web-dev
+            for _ in $(seq 1 24); do
+              STATUS=$(docker inspect -f '{{.State.Health.Status}}' "$CONTAINER" 2>/dev/null || echo missing)
+              case "$STATUS" in
+                healthy)  echo "기동 확인: healthy"; break ;;
+                starting) sleep 5 ;;
+                *)        echo "기동 실패 — 상태: $STATUS"
+                          docker logs --tail 80 "$CONTAINER" 2>&1 || true
+                          exit 1 ;;
+              esac
+            done
+            if [ "$STATUS" != "healthy" ]; then
+              echo "기동 확인 시간 초과 — 마지막 상태: $STATUS"
+              docker logs --tail 80 "$CONTAINER" 2>&1 || true
+              exit 1
+            fi
+            docker image prune -f

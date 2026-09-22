@@ -186,10 +186,55 @@ fetch 로 열고 본문 스트림을 직접 읽는다.
 
 브라우저까지 내려가는 값이므로 **전부 공개된 것으로 다룬다.** 서버 비밀값을 두지 않는다.
 
-| 변수 | 쓰임 |
+| 변수 | 언제 읽히나 | 쓰임 |
+|---|---|---|
+| `API_ORIGIN` | **빌드 시점** | `/api/*` 를 넘길 백엔드 주소. 로컬 전용이다 — 배포에서는 앞단 프록시가 넘긴다 |
+| `NEXT_PUBLIC_API_URL` | **빌드 시점** | 비워 두는 것이 기본. 값을 넣으면 브라우저가 백엔드를 직접 불러 **쿠키가 빠진다** |
+| `NEXT_PUBLIC_KAKAO_JS_KEY` | **빌드 시점** | 카카오 JavaScript 키. 없으면 로그인 버튼이 잠긴다 |
+
+**셋 다 실행할 때 바꿀 수 없다.** `NEXT_PUBLIC_` 값은 브라우저 번들에 박히고,
+`API_ORIGIN` 은 `next build` 가 `routes-manifest.json` 에 써 넣는다.
+**컨테이너 환경변수에 넣어도 아무 일도 일어나지 않는다** — 값이 바뀌면 이미지를 다시 만든다.
+
+---
+
+## 배포
+
+`develop` 으로 push 하면 [`deploy-web-dev.yml`](.github/workflows/deploy-web-dev.yml) 이 돈다.
+**검증 → 이미지 빌드 → 기동 확인 → push → 서버 교체** 순이고, 앞 단계가 실패하면 뒤로 넘어가지 않는다.
+
+| 무엇이 막히나 | 어디서 |
 |---|---|
-| `API_ORIGIN` | `/api/*` 를 넘길 백엔드 주소. **서버에서만 읽는다** (없으면 로컬 기본값) |
-| `NEXT_PUBLIC_API_URL` | 비워 두는 것이 기본. 값을 넣으면 브라우저가 백엔드를 직접 불러 **쿠키가 빠진다** |
+| lint · test · 타입 | `verify` 잡 (`scripts/verify.sh`) |
+| **이미지가 뜨지 못하는 것** | `build-and-push` 의 기동 확인 — 검증은 이미지를 보지 않는다 |
+| **기동 실패한 배포가 초록으로 지나가는 것** | `deploy` 의 헬스 체크 대기 |
+
+### 이 앱이 놓이는 자리
+
+```
+브라우저 ──▶ nginx (safehome.devupii.store)
+                ├─ /api/  ──▶ API        :8080
+                └─ /      ──▶ 이 앱       :3000
+```
+
+**`/api/` 는 이 앱을 거치지 않는다.** 앞단이 바로 API 로 보낸다.
+그래야 진행 상황 스트림(SSE)이 중간 단계를 덜 지나고, 빌드 시점에 박히는 `API_ORIGIN` 에
+배포가 묶이지 않는다. 대신 **웹과 API 가 같은 출처**라, 비회원 분석의 주인을 가리는
+쿠키(`Secure`·`path=/api`)가 그대로 실린다. 이 배치가 깨지면 **에러 없이** 업로드한 사람이
+자기 결과를 못 보게 된다.
+
+nginx 설정의 원본은 [`docker/dev/nginx/safehome.conf`](docker/dev/nginx/safehome.conf) 다.
+서버의 `/etc/nginx/sites-available/safehome` 은 사본이므로 **서버에서만 고치지 않는다.**
+
+### 서버에 처음 올릴 때
+
+저장소 밖에서 한 번만 해야 하는 것들이다.
+
+1. **DNS 레코드.** 이 도메인의 다른 호스트와 같은 모양으로 만든다 —
+   **DDNS 이름을 가리키는 CNAME** 이다. IP 를 직접 적는 A 레코드로 만들면
+   공인 IP 가 바뀌는 날 이 호스트만 죽는다. 와일드카드가 없어 호스트마다 하나씩 필요하다.
+2. nginx 설정 배치 후 `sudo certbot --nginx -d safehome.devupii.store`
+3. `/home/woopi/project/safehome/env/.env_web` 에 `GITHUB_OWNER=` 한 줄
 
 ---
 

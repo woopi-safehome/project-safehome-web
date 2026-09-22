@@ -1,0 +1,24 @@
+services:
+  safehome-web:
+    image: ghcr.io/${GITHUB_OWNER}/safehome-web:dev
+    container_name: safehome-web-dev
+    environment:
+      TZ: Asia/Seoul
+    # 앞단 nginx 만 닿으면 된다. 밖으로 직접 열면 TLS 를 건너뛰는 경로가 생기고,
+    # 그 경로로 들어온 요청은 비회원 쿠키(Secure)를 받지 못해 분석의 주인이 사라진다.
+    # postgres·redis 와 같은 이유로 루프백에만 묶는다.
+    ports:
+      - "127.0.0.1:3000:3000"
+    networks:
+      - safehome-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+networks:
+  safehome-net:
+    external: true

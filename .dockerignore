@@ -1,0 +1,21 @@
+# 빌드 컨텍스트에서 뺀다. node_modules 는 deps 단계가 잠금 파일로 다시 만들고,
+# .next 는 로컬 빌드 산출물이라 이미지 안의 빌드와 섞이면 안 된다.
+node_modules
+.next
+out
+
+.git
+.gitignore
+
+npm-debug.log*
+coverage
+
+.env
+.env.*
+!.env.example
+
+Dockerfile
+.dockerignore
+README.md
+CLAUDE.md
+AGENTS.md

@@ -1,5 +1,6 @@
 import type { ComponentType, SVGProps } from "react";
 import { ClockIcon, DocumentIcon, InfoIcon, LockIcon, ScaleIcon, SearchIcon } from "@/shared/ui/icons";
+import { PublicChecks } from "@/shared/ui/PublicChecks";
 import { SectionHeading } from "./SectionHeading";
 
 /**
@@ -23,7 +24,7 @@ const CAUTIONS: Caution[] = [
   {
     Icon: SearchIcon,
     title: "등기부에 없는 위험은 못 봐요",
-    body: "선순위 임차인(전입세대 열람), 집주인의 세금 체납(납세증명서), 시세 대비 보증금(깡통전세)은 따로 확인해야 해요.",
+    body: "선순위 임차인, 집주인의 세금 체납, 시세 대비 보증금(깡통전세)은 등기부에 나오지 않아요. 아래 공공 서비스에서 확인하세요.",
     emphasis: true,
   },
   {
@@ -79,6 +80,8 @@ export function Cautions() {
           </li>
         ))}
       </ul>
+      {/* "못 본다"로 끝내지 않고 어디서 보는지까지 알려 준다. */}
+      <PublicChecks title="등기부 밖의 위험은 여기서 확인하세요" />
     </section>
   );
 }

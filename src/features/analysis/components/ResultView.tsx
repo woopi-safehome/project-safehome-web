@@ -17,6 +17,7 @@ import {
   ShieldCheckIcon,
 } from "@/shared/ui/icons";
 import { buttonPrimary, buttonSecondary, card } from "@/shared/ui/styles";
+import { PublicChecks } from "@/shared/ui/PublicChecks";
 import type {
   ChecklistItem,
   DeedAnalysis,
@@ -48,7 +49,7 @@ const SAFETY: Record<SafetyLevel, { label: string; desc: string; next: string; I
   SAFE: {
     label: "안전",
     desc: "등기부상 위험 신호가 발견되지 않았습니다",
-    next: "등기부 밖의 위험(선순위 임차인·세금 체납·시세)은 따로 확인하세요.",
+    next: "등기부 밖의 위험(선순위 임차인·세금 체납·시세)은 아래 공공 서비스에서 따로 확인하세요.",
     Icon: ShieldCheckIcon,
     tone: "border-safe/25 bg-safe-soft",
     iconTone: "bg-safe text-surface",
@@ -394,6 +395,9 @@ function Analysis({ analysis }: { analysis: DeedAnalysis }) {
           <Recommendations items={analysis.recommendations} />
         </Card>
       )}
+
+      {/* 등급과 무관하게 늘 보인다. '안전'이어도 등기부 밖의 위험은 남아 있다. */}
+      <PublicChecks />
 
       {analysis.overallSummary != null && (
         <Card title="전체 요약" Icon={DocumentIcon}>

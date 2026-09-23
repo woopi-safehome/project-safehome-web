@@ -163,6 +163,28 @@ describe("ResultView", () => {
     expect(screen.queryByText("위험요소 종합 요약")).toBeNull();
   });
 
+  it("등급과 무관하게 등기부 밖의 위험을 확인할 공공 서비스로 이어 준다", async () => {
+    // '안전'이어도 체납·선순위 세입자는 등기부에 나오지 않는다. 어디서 보는지까지 알려야 한다.
+    serverReturns(valid({ safetyLevel: "SAFE", analysisSummary: "요약입니다" }));
+    render(<ResultView jobId="j1" />);
+
+    await waitFor(() => expect(screen.getByText("요약입니다")).toBeTruthy());
+    const links = screen.getAllByRole("link").filter((a) => a.getAttribute("target") === "_blank");
+    expect(links.length).toBe(3);
+    for (const a of links) {
+      expect(a.getAttribute("href")).toMatch(/^https:\/\/(www\.khug\.or\.kr|www\.gov\.kr|www\.nts\.go\.kr)\//);
+      expect(a.getAttribute("rel")).toContain("noopener");
+    }
+  });
+
+  it("등기부가 아니면 공공 서비스 안내도 내놓지 않는다", async () => {
+    serverReturns({ isValidDeed: false, reason: "등기부등본이 아닙니다." });
+    render(<ResultView jobId="j1" />);
+
+    await screen.findByRole("alert");
+    expect(screen.queryByText("등기부로 알 수 없는 것도 확인하세요")).toBeNull();
+  });
+
   it("결과가 비어 있으면 찾을 수 없다고 알린다", async () => {
     serverReturns(null);
     render(<ResultView jobId="j1" />);

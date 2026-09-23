@@ -60,7 +60,8 @@ describe("HistoryList", () => {
     render(<HistoryList />);
 
     await screen.findByText("분석 이력이 없습니다");
-    expect(link("분석 시작하기").getAttribute("href")).toBe("/");
+    // 첫 화면은 안내가 길어서, 맨 위가 아니라 업로드 영역으로 바로 보낸다.
+    expect(link("분석 시작하기").getAttribute("href")).toBe("/#analyze");
   });
 
   it("끝난 작업은 결과로, 도는 작업은 진행 화면으로 보낸다", async () => {

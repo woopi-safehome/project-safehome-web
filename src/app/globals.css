@@ -1,27 +1,121 @@
 @import "tailwindcss";
 
+/*
+ * 디자인 토큰. 화면은 색을 직접 쓰지 않고 아래 이름으로만 쓴다 —
+ * 다크 모드는 값만 바꾸면 따라오고, 배색을 고칠 때 한 곳만 보면 된다.
+ *
+ * 브랜드는 **신뢰를 주는 파랑**, 판정 상태는 양호·주의·위험 세 색이다.
+ * 상태 색은 등급을 보여 줄 때만 쓴다. 장식에 쓰면 사용자가 위험 신호로 오해한다.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  --canvas: #f5f7fb;
+  --surface: #ffffff;
+  --surface-muted: #f0f3f9;
+  --ink: #0f1b2d;
+  --muted: #56657c;
+  --subtle: #8391a7;
+  --line: #e2e7ef;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --brand: #1f4fd1;
+  --brand-strong: #173c9e;
+  --brand-soft: #e9effd;
+  --brand-ink: #ffffff;
+  --navy: #0b1f44;
+
+  --safe: #0d8a5c;
+  --safe-soft: #e5f5ee;
+  --caution: #b26a00;
+  --caution-soft: #fff3de;
+  --danger: #c62f3a;
+  --danger-soft: #fdebec;
+
+  /* 이전 이름. 남아 있는 곳이 있어도 깨지지 않게 둔다. */
+  --background: var(--canvas);
+  --foreground: var(--ink);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --canvas: #0a111e;
+    --surface: #111a2b;
+    --surface-muted: #16223a;
+    --ink: #e7edf6;
+    --muted: #9aa8bd;
+    --subtle: #6d7c93;
+    --line: #22304a;
+
+    --brand: #6f97ff;
+    --brand-strong: #93b1ff;
+    --brand-soft: #172647;
+    --brand-ink: #0a111e;
+    --navy: #070d19;
+
+    --safe: #4cc99a;
+    --safe-soft: #0f2a21;
+    --caution: #f2b44a;
+    --caution-soft: #2d2311;
+    --danger: #ff7a82;
+    --danger-soft: #34161b;
   }
 }
 
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-subtle: var(--subtle);
+  --color-line: var(--line);
+
+  --color-brand: var(--brand);
+  --color-brand-strong: var(--brand-strong);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-ink: var(--brand-ink);
+  --color-navy: var(--navy);
+
+  --color-safe: var(--safe);
+  --color-safe-soft: var(--safe-soft);
+  --color-caution: var(--caution);
+  --color-caution-soft: var(--caution-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --font-sans: var(--font-noto-sans-kr);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--canvas);
+  color: var(--ink);
   /* 레이아웃이 불러오는 글꼴을 쓴다. 여기서 Arial 로 덮으면 불러온 글꼴이 버려진다. */
   font-family: var(--font-sans), system-ui, sans-serif;
+  word-break: keep-all;
+}
+
+/* 분석 중 화면의 문서 훑기 표시. 움직임을 줄이도록 설정한 사용자에게는 멈춘다. */
+@keyframes scan {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(56px); }
+}
+
+.animate-scan {
+  animation: scan 2.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-scan,
+  .animate-pulse,
+  .animate-spin {
+    animation: none;
+  }
 }

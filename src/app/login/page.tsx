@@ -5,8 +5,8 @@ import { LoginPanel } from "@/features/auth/components/LoginPanel";
  */
 export default function LoginPage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-10 px-6 py-16">
-      <h1 className="text-2xl font-semibold sm:text-3xl">등기부등본 안전 분석</h1>
+    <main className="flex flex-1 flex-col items-center justify-center bg-gradient-to-b from-brand-soft/60 to-canvas px-4 py-16">
+      <h1 className="sr-only">로그인</h1>
       <LoginPanel />
     </main>
   );

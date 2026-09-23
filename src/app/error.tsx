@@ -1,5 +1,8 @@
 "use client";
 
+import { AlertIcon, RefreshIcon } from "@/shared/ui/icons";
+import { buttonPrimary } from "@/shared/ui/styles";
+
 /**
  * 화면이 예기치 않게 깨졌을 때의 마지막 그물.
  * 기능 안에서 다루는 서버 오류는 각 화면이 문구와 함께 보여준다 — 여기까지 오면 그 밖의 경우다.
@@ -8,15 +11,15 @@
  */
 export default function Error({ retry }: { error: Error & { digest?: string }; retry: () => void }) {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-5 px-6 text-center">
-      <p role="alert" className="text-sm">
+    <main className="flex flex-1 flex-col items-center justify-center gap-5 px-6 py-20 text-center">
+      <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-danger-soft text-danger">
+        <AlertIcon width={28} height={28} />
+      </span>
+      <p role="alert" className="text-base font-semibold">
         화면을 표시하지 못했습니다.
       </p>
-      <button
-        type="button"
-        onClick={retry}
-        className="rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background"
-      >
+      <button type="button" onClick={retry} className={buttonPrimary}>
+        <RefreshIcon width={18} height={18} />
         다시 시도
       </button>
     </main>

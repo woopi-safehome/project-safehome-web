@@ -7,8 +7,11 @@ import { AccountActions } from "@/features/auth/components/AccountActions";
  */
 export default function HistoryPage() {
   return (
-    <main className="flex min-h-screen flex-col items-center gap-6 px-6 py-12">
-      <h1 className="text-xl font-semibold sm:text-2xl">분석 이력</h1>
+    <main className="flex flex-1 flex-col items-center gap-8 px-4 py-10 sm:py-14">
+      <div className="flex w-full max-w-2xl flex-col gap-1">
+        <p className="text-sm font-semibold text-brand">내 기록</p>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">분석 이력</h1>
+      </div>
       <HistoryList />
       <AccountActions />
     </main>

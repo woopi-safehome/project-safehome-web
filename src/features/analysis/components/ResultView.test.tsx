@@ -147,6 +147,22 @@ describe("ResultView", () => {
     expect(screen.queryByText("잦은 이전")).toBeNull();
   });
 
+  it("null 로 온 필드는 빈 줄로 그리지 않고, 묶음이 null 이어도 멈추지 않는다", async () => {
+    // 분석 서버의 프롬프트가 모르는 값을 null 로 채우라고 지시한다. 단독소유의 지분이 대표적이다.
+    serverReturns({
+      ...valid({ analysisSummary: "요약입니다" }),
+      ownershipInfo: { currentOwner: "홍길동", ownerType: "단독소유", shareRatio: null },
+      riskSummary: null,
+      recommendations: null,
+    } as unknown as DeedAnalysis);
+    render(<ResultView jobId="j1" />);
+
+    await waitFor(() => expect(screen.getByText("요약입니다")).toBeTruthy());
+    expect(screen.getByText("단독소유")).toBeTruthy();
+    expect(screen.queryByText("지분")).toBeNull();
+    expect(screen.queryByText("위험요소 종합 요약")).toBeNull();
+  });
+
   it("결과가 비어 있으면 찾을 수 없다고 알린다", async () => {
     serverReturns(null);
     render(<ResultView jobId="j1" />);

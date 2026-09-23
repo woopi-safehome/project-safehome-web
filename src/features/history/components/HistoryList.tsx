@@ -1,7 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import type { ReactNode } from "react";
 import type { JobStatus, SafetyLevel } from "@/shared/api/contract";
+import { HistoryIllustration } from "@/shared/ui/illustrations";
+import { ChevronRightIcon, DocumentIcon, RefreshIcon } from "@/shared/ui/icons";
+import { buttonPrimary, buttonSecondary, card } from "@/shared/ui/styles";
 import type { DeedJobSummary } from "../api";
 import { useHistory } from "../useHistory";
 
@@ -10,16 +14,16 @@ import { useHistory } from "../useHistory";
  */
 
 const STATUS: Record<JobStatus, { label: string; tone: string }> = {
-  COMPLETED: { label: "완료", tone: "bg-emerald-50 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200" },
-  IN_PROGRESS: { label: "분석 중", tone: "bg-amber-50 text-amber-800 dark:bg-amber-950 dark:text-amber-200" },
-  PENDING: { label: "분석 중", tone: "bg-amber-50 text-amber-800 dark:bg-amber-950 dark:text-amber-200" },
-  FAILED: { label: "실패", tone: "bg-red-50 text-red-800 dark:bg-red-950 dark:text-red-200" },
+  COMPLETED: { label: "완료", tone: "bg-brand-soft text-brand" },
+  IN_PROGRESS: { label: "분석 중", tone: "bg-surface-muted text-muted" },
+  PENDING: { label: "분석 중", tone: "bg-surface-muted text-muted" },
+  FAILED: { label: "실패", tone: "bg-danger-soft text-danger" },
 };
 
-const SAFETY: Record<SafetyLevel, string> = {
-  SAFE: "안전",
-  CAUTION: "주의",
-  DANGER: "위험",
+const SAFETY: Record<SafetyLevel, { label: string; tone: string }> = {
+  SAFE: { label: "안전", tone: "bg-safe-soft text-safe" },
+  CAUTION: { label: "주의", tone: "bg-caution-soft text-caution" },
+  DANGER: { label: "위험", tone: "bg-danger-soft text-danger" },
 };
 
 /**
@@ -42,56 +46,65 @@ function destinationOf(job: DeedJobSummary): string | null {
 function JobCard({ job }: { job: DeedJobSummary }) {
   const status = STATUS[job.status];
   const date = formatDate(job.createdAt);
-
-  const body = (
-    <>
-      <div className="flex items-start justify-between gap-3">
-        <p className="text-sm font-medium">{job.fileName}</p>
-        <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs ${status.tone}`}>
-          {status.label}
-        </span>
-      </div>
-
-      {job.address !== null && (
-        <p className="mt-2 truncate text-xs text-black/60 dark:text-white/60">{job.address}</p>
-      )}
-
-      <div className="mt-3 flex items-center gap-2 text-xs text-black/50 dark:text-white/50">
-        {job.safetyLevel !== null && (
-          <span className="rounded-full bg-black/5 px-2 py-0.5 dark:bg-white/10">
-            {SAFETY[job.safetyLevel]}
-          </span>
-        )}
-        {job.leaseType !== null && (
-          <span className="rounded-full bg-black/5 px-2 py-0.5 dark:bg-white/10">
-            {job.leaseType}
-          </span>
-        )}
-        {date !== "" && <span>{date}</span>}
-      </div>
-    </>
-  );
-
-  const className = "block rounded-xl border border-black/10 p-4 dark:border-white/15";
   const to = destinationOf(job);
 
+  const body = (
+    <div className="flex items-start gap-4">
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-soft text-brand">
+        <DocumentIcon width={22} height={22} />
+      </span>
+      <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+        <div className="flex items-start justify-between gap-3">
+          <p className="truncate text-sm font-semibold">{job.fileName}</p>
+          <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold ${status.tone}`}>
+            {status.label}
+          </span>
+        </div>
+        {job.address !== null && <p className="truncate text-sm text-muted">{job.address}</p>}
+        <div className="flex flex-wrap items-center gap-2 text-xs text-muted">
+          {job.safetyLevel !== null && (
+            <span className={`rounded-full px-2 py-0.5 font-bold ${SAFETY[job.safetyLevel].tone}`}>
+              {SAFETY[job.safetyLevel].label}
+            </span>
+          )}
+          {job.leaseType !== null && (
+            <span className="rounded-full bg-surface-muted px-2 py-0.5">{job.leaseType}</span>
+          )}
+          {date !== "" && <span>{date}</span>}
+        </div>
+        {to === null && (
+          <p className="text-xs text-danger">분석에 실패한 파일입니다. 새로운 파일을 다시 업로드해 주세요.</p>
+        )}
+      </div>
+      {to !== null && <ChevronRightIcon className="mt-3 shrink-0 text-subtle" />}
+    </div>
+  );
+
+  const className = `${card} block p-4`;
+
   if (to === null) {
-    return (
-      <li className={className}>
-        {body}
-        <p className="mt-2 text-xs text-black/50 dark:text-white/50">
-          분석에 실패한 파일입니다. 새로운 파일을 다시 업로드해 주세요.
-        </p>
-      </li>
-    );
+    return <li className={className}>{body}</li>;
   }
 
   return (
     <li>
-      <Link href={to} className={`${className} transition-colors hover:border-black/30 dark:hover:border-white/30`}>
+      <Link href={to} className={`${className} transition-all hover:border-brand/40 hover:shadow-md hover:shadow-brand/5`}>
         {body}
       </Link>
     </li>
+  );
+}
+
+/** 목록이 비었거나 막혔을 때의 화면. 무엇을 하면 되는지를 버튼으로 준다. */
+function Empty({ message, role, action }: { message: string; role?: "alert"; action: ReactNode }) {
+  return (
+    <div className={`${card} flex w-full max-w-2xl flex-col items-center gap-5 px-6 py-10 text-center`}>
+      <HistoryIllustration className="h-36 w-auto" />
+      <p role={role} className="text-base font-semibold">
+        {message}
+      </p>
+      {action}
+    </div>
   );
 }
 
@@ -100,9 +113,14 @@ export function HistoryList() {
 
   if (loading) {
     return (
-      <p role="status" className="text-sm text-black/60 dark:text-white/60">
-        이력을 불러오는 중…
-      </p>
+      <div className="flex w-full max-w-2xl flex-col gap-3">
+        <p role="status" className="sr-only">
+          이력을 불러오는 중…
+        </p>
+        {[0, 1, 2].map((i) => (
+          <div key={i} className={`${card} h-24 animate-pulse bg-surface-muted/60`} />
+        ))}
+      </div>
     );
   }
 
@@ -110,58 +128,54 @@ export function HistoryList() {
     // 로그인이 없어서 막힌 것이면 다시 시도해도 같다. 갈 곳을 준다.
     const needsLogin = error === "로그인이 필요합니다.";
     return (
-      <div className="flex flex-col items-center gap-4 text-center">
-        <p role="alert" className="text-sm">
-          {error}
-        </p>
-        {needsLogin ? (
-          <Link
-            href="/login"
-            className="rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background"
-          >
-            로그인하기
-          </Link>
-        ) : (
-          <button
-            type="button"
-            onClick={reload}
-            className="rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background"
-          >
-            다시 시도
-          </button>
-        )}
-      </div>
+      <Empty
+        message={error}
+        role="alert"
+        action={
+          needsLogin ? (
+            <div className="flex flex-col items-center gap-2">
+              <p className="text-sm text-muted">로그인하면 분석한 등기부등본을 언제든 다시 볼 수 있어요.</p>
+              <Link href="/login" className={buttonPrimary}>
+                로그인하기
+              </Link>
+            </div>
+          ) : (
+            <button type="button" onClick={reload} className={buttonPrimary}>
+              <RefreshIcon width={18} height={18} />
+              다시 시도
+            </button>
+          )
+        }
+      />
     );
   }
 
   if (jobs.length === 0) {
     return (
-      <div className="flex flex-col items-center gap-4 text-center">
-        <p className="text-sm">분석 이력이 없습니다</p>
-        <Link
-          href="/"
-          className="rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background"
-        >
-          분석 시작하기
-        </Link>
-      </div>
+      <Empty
+        message="분석 이력이 없습니다"
+        action={
+          <Link href="/#analyze" className={buttonPrimary}>
+            분석 시작하기
+          </Link>
+        }
+      />
     );
   }
 
   return (
-    <div className="flex w-full max-w-xl flex-col gap-4">
+    <div className="flex w-full max-w-2xl flex-col gap-4">
       <ul className="flex flex-col gap-3">
         {jobs.map((job) => (
           <JobCard key={job.jobId} job={job} />
         ))}
       </ul>
-
       {hasNext && (
         <button
           type="button"
           onClick={() => void loadMore()}
           disabled={loadingMore}
-          className="self-center rounded-full border border-black/15 px-6 py-2.5 text-sm transition-opacity disabled:opacity-40 dark:border-white/20"
+          className={`${buttonSecondary} self-center`}
         >
           {loadingMore ? "불러오는 중…" : "더 보기"}
         </button>

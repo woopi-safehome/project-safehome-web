@@ -37,15 +37,15 @@ export function AccountActions() {
     asking === "logout" ? "로그아웃 하시겠습니까?" : "탈퇴 시 모든 분석 기록이 삭제됩니다. 정말 탈퇴하시겠습니까?";
 
   return (
-    <div className="flex w-full max-w-xl flex-col items-center gap-3 border-t border-black/10 pt-6 dark:border-white/15">
+    <div className="flex w-full max-w-2xl flex-col items-center gap-3 border-t border-line pt-6">
       {error !== null && (
-        <p role="alert" className="text-xs text-red-600 dark:text-red-400">
+        <p role="alert" className="text-sm text-danger">
           {error}
         </p>
       )}
 
       {asking === null ? (
-        <div className="flex items-center gap-4 text-xs">
+        <div className="flex items-center gap-5 text-sm">
           <button
             type="button"
             onClick={() => setAsking("logout")}
@@ -56,14 +56,14 @@ export function AccountActions() {
           <button
             type="button"
             onClick={() => setAsking("withdraw")}
-            className="text-black/50 underline underline-offset-4 dark:text-white/50"
+            className="text-muted underline underline-offset-4"
           >
             회원탈퇴
           </button>
         </div>
       ) : (
-        <div className="flex flex-col items-center gap-3 text-xs">
-          <p className="whitespace-pre-line text-center text-black/70 dark:text-white/70">
+        <div className="flex flex-col items-center gap-3 rounded-2xl border border-line bg-surface px-6 py-5 text-sm">
+          <p className="whitespace-pre-line text-center text-ink">
             {question}
           </p>
           <div className="flex items-center gap-4">
@@ -78,7 +78,7 @@ export function AccountActions() {
               type="button"
               onClick={() => (asking === "logout" ? logout() : void remove())}
               disabled={working}
-              className="text-red-600 underline underline-offset-4 disabled:opacity-40 dark:text-red-400"
+              className="font-semibold text-danger underline underline-offset-4 disabled:opacity-40"
             >
               {working ? "처리 중…" : asking === "logout" ? "로그아웃" : "탈퇴"}
             </button>

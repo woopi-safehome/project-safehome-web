@@ -9,10 +9,13 @@ export default async function ResultPage(props: PageProps<"/result/[jobId]">) {
   const { jobId } = await props.params;
 
   return (
-    <main className="flex min-h-screen flex-col items-center gap-6 px-6 py-12">
-      <h1 className="text-xl font-semibold sm:text-2xl">분석 결과</h1>
-      <ResultView jobId={jobId} />
+    <main className="flex flex-1 flex-col items-center gap-6 bg-gradient-to-b from-brand-soft/60 to-canvas to-40% px-4 py-10 sm:py-14">
+      <div className="flex w-full max-w-3xl flex-col gap-1">
+        <p className="text-sm font-semibold text-brand">분석 리포트</p>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">분석 결과</h1>
+      </div>
       <AnonymousNotice />
+      <ResultView jobId={jobId} />
     </main>
   );
 }

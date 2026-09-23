@@ -101,7 +101,9 @@ async function run(jobId: string, signal: AbortSignal, emit: Emit): Promise<void
 
     if (event.status === "FAILED") {
       await hold();
-      emit((s) => ({ ...s, error: "분석에 실패했습니다. 다시 시도해주세요." }));
+      // 서버가 사유를 담아 보낸다("PDF 원본을 올려 주세요" 등). 그것을 버리면 사용자는 무엇을 고칠지 모른다.
+      const reason = event.message?.trim();
+      emit((s) => ({ ...s, error: reason ? reason : "분석에 실패했습니다. 다시 시도해주세요." }));
       return;
     }
   }

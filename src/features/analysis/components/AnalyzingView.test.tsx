@@ -148,8 +148,20 @@ describe("AnalyzingView", () => {
     expect((await screen.findByRole("alert")).textContent).toBe("결과를 불러오지 못했습니다.");
   });
 
-  it("실패 이벤트를 받으면 재시도를 내어 준다", async () => {
-    serverSends(event("FAILED", null));
+  it("실패 이벤트를 받으면 서버가 준 사유를 보여 주고, 재시도와 새 파일 올리기를 내어 준다", async () => {
+    // 사유를 버리면 사용자는 무엇을 고칠지 모른다 — 다른 PDF 를 올렸다면 다시 시도해도 같다.
+    serverSends({ ...event("FAILED", "PDF_PARSING"), message: "PDF 원본을 올려 주세요." });
+    render(<AnalyzingView jobId="j1" />);
+
+    await passGate();
+
+    await waitFor(() => expect(screen.getByRole("alert").textContent).toBe("PDF 원본을 올려 주세요."));
+    expect(screen.getByRole("button", { name: "다시 시도" })).toBeTruthy();
+    expect(screen.getByRole("link", { name: "새 파일 올리기" }).getAttribute("href")).toBe("/#analyze");
+  });
+
+  it("실패 사유가 비어 있으면 기본 문구를 쓴다", async () => {
+    serverSends({ ...event("FAILED", null), message: "" });
     render(<AnalyzingView jobId="j1" />);
 
     await passGate();
@@ -157,7 +169,6 @@ describe("AnalyzingView", () => {
     await waitFor(() =>
       expect(screen.getByRole("alert").textContent).toBe("분석에 실패했습니다. 다시 시도해주세요."),
     );
-    expect(screen.getByRole("button", { name: "다시 시도" })).toBeTruthy();
   });
 
   it("완료도 실패도 없이 스트림이 닫히면 끊긴 것으로 다룬다", async () => {

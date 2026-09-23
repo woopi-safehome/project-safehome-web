@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { AnalysisStep } from "@/shared/api/contract";
 import { ANALYSIS_STEP } from "@/shared/api/contract";
 import { AlertIcon, CheckCircleIcon, RefreshIcon } from "@/shared/ui/icons";
-import { buttonPrimary, card } from "@/shared/ui/styles";
+import { buttonPrimary, buttonSecondary, card } from "@/shared/ui/styles";
 import { useAnalyzing } from "../useAnalyzing";
 
 /**
@@ -59,10 +60,16 @@ export function AnalyzingView({ jobId }: { jobId: string }) {
         <p role="alert" className="text-base font-semibold">
           {error}
         </p>
-        <button type="button" onClick={retry} className={buttonPrimary}>
-          <RefreshIcon width={18} height={18} />
-          다시 시도
-        </button>
+        {/* 파일이 문제면 다시 시도해도 같다. 새 파일로 갈 길을 함께 준다. */}
+        <div className="flex flex-wrap justify-center gap-2">
+          <button type="button" onClick={retry} className={buttonPrimary}>
+            <RefreshIcon width={18} height={18} />
+            다시 시도
+          </button>
+          <Link href="/#analyze" className={buttonSecondary}>
+            새 파일 올리기
+          </Link>
+        </div>
       </div>
     );
   }

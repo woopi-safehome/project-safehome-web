@@ -17,7 +17,7 @@ const notoSansKr = Noto_Sans_KR({
 export const metadata: Metadata = {
   title: "SafeHome — 등기부등본 안전 분석",
   description:
-    "전세·월세 계약 전, 등기부등본 PDF 를 올리면 소유권·근저당·압류 등 보증금 위험 신호를 AI 가 정리해 드립니다.",
+    "전세·월세 계약 전에 등기부등본 PDF를 올려 보세요. 보증금에 영향을 줄 수 있는 내용을 AI가 찾아 쉬운 말로 알려 드려요.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

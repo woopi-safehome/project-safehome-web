@@ -73,7 +73,7 @@ function JobCard({ job }: { job: DeedJobSummary }) {
           {date !== "" && <span>{date}</span>}
         </div>
         {to === null && (
-          <p className="text-xs text-danger">분석에 실패한 파일입니다. 새로운 파일을 다시 업로드해 주세요.</p>
+          <p className="text-xs text-danger">분석하지 못한 파일이에요. 다른 파일로 다시 올려 주세요.</p>
         )}
       </div>
       {to !== null && <ChevronRightIcon className="mt-3 shrink-0 text-subtle" />}
@@ -153,7 +153,7 @@ export function HistoryList() {
   if (jobs.length === 0) {
     return (
       <Empty
-        message="분석 이력이 없습니다"
+        message="아직 분석한 기록이 없어요"
         action={
           <Link href="/#analyze" className={buttonPrimary}>
             분석 시작하기

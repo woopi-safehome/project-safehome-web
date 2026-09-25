@@ -14,23 +14,23 @@ import { useAnalyzing } from "../useAnalyzing";
  * 여기서 위험도를 계산하거나 결과를 해석하지 않는다 — 서버가 정한다.
  */
 const STEP_LABEL: Record<AnalysisStep, string> = {
-  PDF_PARSING: "등기부등본의 내용을 읽어오고 있어요",
-  LLM_ANALYSIS: "소유권, 근저당, 가압류를 꼼꼼히 살펴보고 있어요",
-  POST_PROCESSING: "분석을 마무리하고 안전 등급을 판단하고 있어요",
+  PDF_PARSING: "등기부등본을 읽고 있어요",
+  LLM_ANALYSIS: "소유권과 근저당, 압류 기록을 하나씩 살펴보고 있어요",
+  POST_PROCESSING: "거의 다 됐어요. 결과를 정리하고 있어요",
 };
 
 /** 단계 목록의 짧은 이름. 위의 긴 문구는 지금 단계 하나만 보여 준다. */
 const STEP_TITLE: Record<AnalysisStep, { title: string; detail: string }> = {
-  PDF_PARSING: { title: "문서 읽기", detail: "표제부 · 갑구 · 을구 구분" },
-  LLM_ANALYSIS: { title: "권리관계 분석", detail: "11개 항목 점검" },
-  POST_PROCESSING: { title: "결과 정리", detail: "안전 등급 산출" },
+  PDF_PARSING: { title: "문서 읽기", detail: "표제부, 갑구, 을구 나누기" },
+  LLM_ANALYSIS: { title: "권리 살펴보기", detail: "11가지 항목 확인" },
+  POST_PROCESSING: { title: "결과 정리", detail: "등급 정하기" },
 };
 
 /** 문서를 훑는 그림. 진행이 멈춘 것이 아니라는 것을 움직임으로 알린다. */
 function ScanningDocument() {
   return (
     <div aria-hidden="true" className="relative mx-auto h-40 w-32">
-      <div className="absolute inset-0 rounded-xl border border-line bg-surface shadow-lg shadow-brand/10" />
+      <div className="absolute inset-0 rounded-2xl bg-surface shadow-lg shadow-brand/10 ring-1 ring-line/70" />
       <div className="absolute left-4 right-4 top-5 flex flex-col gap-2.5">
         <div className="h-2 w-14 rounded-full bg-brand" />
         {[88, 70, 80, 60, 84, 66, 76].map((w, i) => (
@@ -54,7 +54,7 @@ export function AnalyzingView({ jobId }: { jobId: string }) {
   if (error !== null) {
     return (
       <div className={`${card} flex w-full max-w-md flex-col items-center gap-5 p-8 text-center`}>
-        <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-danger-soft text-danger">
+        <span className="flex h-14 w-14 items-center justify-center rounded-full bg-danger-soft text-danger">
           <AlertIcon width={28} height={28} />
         </span>
         <p role="alert" className="text-base font-semibold">
@@ -77,14 +77,14 @@ export function AnalyzingView({ jobId }: { jobId: string }) {
   if (completed) {
     return (
       <div className={`${card} flex w-full max-w-md flex-col items-center gap-4 p-10 text-center`}>
-        <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-safe-soft text-safe">
+        <span className="flex h-14 w-14 items-center justify-center rounded-full bg-safe-soft text-safe">
           <CheckCircleIcon width={28} height={28} />
         </span>
         {/* 곧 결과 화면으로 넘어간다. 그 사이 빈 화면이 보이지 않게 한다. */}
         <p role="status" className="text-base font-semibold">
           분석이 끝났어요
         </p>
-        <p className="text-sm text-muted">결과 화면으로 이동하고 있어요…</p>
+        <p className="text-sm text-muted">결과 화면으로 넘어갈게요…</p>
       </div>
     );
   }
@@ -95,7 +95,7 @@ export function AnalyzingView({ jobId }: { jobId: string }) {
     <div className={`${card} flex w-full max-w-md flex-col gap-8 p-8`}>
       <ScanningDocument />
 
-      <p role="status" aria-live="polite" className="text-center text-base font-semibold">
+      <p role="status" aria-live="polite" className="text-center text-base font-medium">
         {STEP_LABEL[displayStep]}
       </p>
 
@@ -107,7 +107,7 @@ export function AnalyzingView({ jobId }: { jobId: string }) {
             <li
               key={step}
               aria-current={active ? "step" : undefined}
-              className={`flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors ${active ? "bg-brand-soft" : ""}`}
+              className={`flex items-center gap-3 rounded-2xl px-3 py-2.5 transition-colors ${active ? "bg-brand-soft" : ""}`}
             >
               <span
                 className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
@@ -131,8 +131,8 @@ export function AnalyzingView({ jobId }: { jobId: string }) {
         })}
       </ol>
 
-      <p className="rounded-xl bg-surface-muted px-4 py-3 text-center text-xs leading-relaxed text-muted">
-        보통 1분 안팎 걸려요. 창을 닫지 말고 잠시만 기다려 주세요.
+      <p className="rounded-2xl bg-surface-muted px-4 py-3 text-center text-xs leading-relaxed text-muted">
+        보통 1분 안팎 걸려요. 창은 닫지 말고 조금만 기다려 주세요.
       </p>
     </div>
   );

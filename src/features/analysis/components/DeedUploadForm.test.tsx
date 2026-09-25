@@ -34,7 +34,7 @@ describe("DeedUploadForm", () => {
   it("파일을 고르기 전에는 제출할 수 없다", () => {
     render(<DeedUploadForm />);
 
-    expect(button("분석 시작").disabled).toBe(true);
+    expect(button("분석 시작하기").disabled).toBe(true);
   });
 
   it("임대차 유형은 하나만 선택되고, 다시 누르면 해제된다", () => {
@@ -103,7 +103,7 @@ describe("DeedUploadForm", () => {
     expect((await screen.findByRole("alert")).textContent).toBe(
       "오늘 분석 가능한 횟수를 모두 사용했습니다.",
     );
-    expect(screen.getByText("내일 다시 분석할 수 있습니다.")).toBeTruthy();
+    expect(screen.getByText("내일 다시 분석하실 수 있어요.")).toBeTruthy();
   });
 
   it("다른 실패에는 내일 안내를 붙이지 않는다", async () => {
@@ -113,7 +113,7 @@ describe("DeedUploadForm", () => {
     submitWith(container);
 
     await screen.findByRole("alert");
-    expect(screen.queryByText("내일 다시 분석할 수 있습니다.")).toBeNull();
+    expect(screen.queryByText("내일 다시 분석하실 수 있어요.")).toBeNull();
   });
 
   it("업로드 중에는 다시 제출할 수 없다", async () => {
@@ -122,6 +122,6 @@ describe("DeedUploadForm", () => {
 
     submitWith(container);
 
-    await waitFor(() => expect(button("업로드 중…").disabled).toBe(true));
+    await waitFor(() => expect(button("올리는 중…").disabled).toBe(true));
   });
 });

@@ -18,18 +18,18 @@ export function AnonymousNotice() {
   if (isAuthenticated) return null;
 
   return (
-    <aside className="flex w-full max-w-3xl items-start gap-3 rounded-2xl border border-brand/20 bg-brand-soft px-4 py-3.5 text-sm leading-relaxed">
+    <aside className="flex w-full max-w-3xl items-start gap-3 rounded-3xl bg-brand-soft px-5 py-4 text-sm leading-relaxed">
       <InfoIcon width={18} height={18} className="mt-0.5 shrink-0 text-brand" />
       <div>
         <p>
-          비회원 분석은 <strong className="font-semibold">이 주소를 벗어나면 다시 찾을 수 없습니다.</strong>
+          로그인하지 않고 분석한 결과는 <strong className="font-semibold">이 페이지를 벗어나면 다시 찾을 수 없어요.</strong>
         </p>
         <p className="text-muted">
-          이력을 남기려면{" "}
+          기록을 남기고 싶으시면{" "}
           <Link href="/login" className="font-semibold text-brand underline underline-offset-4">
             로그인
           </Link>{" "}
-          후 분석하세요.
+          후에 분석해 주세요.
         </p>
       </div>
     </aside>

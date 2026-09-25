@@ -38,7 +38,7 @@ export function LoginPanel() {
       // 앱과 같다 — 처음 온 사람만 소개를 거친다.
       router.replace(isNewUser ? "/onboarding" : "/");
     } catch (e) {
-      setError(e instanceof ApiError ? e.message : "로그인하지 못했습니다.");
+      setError(e instanceof ApiError ? e.message : "로그인하지 못했어요. 잠시 후 다시 시도해 주세요.");
       setWorking(false);
     }
   }
@@ -47,8 +47,8 @@ export function LoginPanel() {
     <div className={`${card} flex w-full max-w-md flex-col items-center gap-6 p-8 text-center shadow-xl shadow-brand/5`}>
       <HistoryIllustration className="h-36 w-auto" />
       <div className="flex flex-col gap-2">
-        <h2 className="text-2xl font-bold tracking-tight">로그인하고 이력을 남기세요</h2>
-        <p className="text-sm text-muted">로그인하면 분석한 등기부등본을 다시 볼 수 있습니다.</p>
+        <h2 className="text-2xl font-bold tracking-tight">로그인하면 기록이 남아요</h2>
+        <p className="text-sm text-muted">분석했던 등기부등본을 언제든 다시 볼 수 있어요.</p>
       </div>
 
       <ul className="flex w-full flex-col gap-2 rounded-2xl bg-surface-muted p-4 text-left">
@@ -78,7 +78,7 @@ export function LoginPanel() {
       {!configured && (
         <p role="status" className="flex items-start gap-1.5 text-left text-xs leading-relaxed text-muted">
           <InfoIcon width={14} height={14} className="mt-0.5 shrink-0" />
-          카카오 로그인 설정이 아직 없습니다. 지금은 로그인 없이 분석만 할 수 있습니다.
+          카카오 로그인은 아직 준비 중이에요. 지금은 로그인 없이 분석만 하실 수 있어요.
         </p>
       )}
     </div>

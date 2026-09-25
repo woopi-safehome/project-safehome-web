@@ -6,23 +6,24 @@ import { AnalyzeIllustration, ResultIllustration, UploadIllustration } from "@/s
 import { buttonPrimary, card } from "@/shared/ui/styles";
 
 /**
- * 처음 온 사람에게 서비스를 소개한다. 앱의 온보딩과 같은 순서·문구를 쓴다.
+ * 처음 온 사람에게 서비스를 소개한다. 순서는 앱의 온보딩과 같다.
+ * 문구는 2026-09 웹 문구를 부드럽게 다듬으며 앱과 달라졌다 — 앱은 이번 공모전 범위 밖이라 맞추지 않았다.
  * **건너뛸 수 있어야 한다** — 이미 아는 사람을 붙잡아 두지 않는다.
  */
 const PAGES = [
   {
-    title: "등기부등본을\n업로드하세요",
-    description: "PDF 파일을 선택하기만 하면\nAI가 즉시 분석을 시작합니다",
+    title: "등기부등본만\n올려 주세요",
+    description: "PDF 파일 하나면 충분해요\n나머지는 AI가 읽어 볼게요",
     Illustration: UploadIllustration,
   },
   {
-    title: "AI가 꼼꼼하게\n분석합니다",
-    description: "표제부, 갑구, 을구의 권리관계를\n자동으로 파악해 드립니다",
+    title: "어려운 권리관계를\n대신 읽어요",
+    description: "갑구와 을구에 적힌 권리를\n하나씩 살펴볼게요",
     Illustration: AnalyzeIllustration,
   },
   {
-    title: "안전 등급으로\n한눈에 확인",
-    description: "위험 요소를 SAFE / CAUTION / DANGER\n등급으로 명확하게 알려드립니다",
+    title: "결과는\n한눈에 보여요",
+    description: "안전·주의·위험 세 가지 등급과\n계약 전에 할 일을 알려 드려요",
     Illustration: ResultIllustration,
   },
 ] as const;

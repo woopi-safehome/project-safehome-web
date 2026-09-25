@@ -48,24 +48,24 @@ type Icon = ComponentType<SVGProps<SVGSVGElement>>;
 const SAFETY: Record<SafetyLevel, { label: string; desc: string; next: string; Icon: Icon; tone: string; iconTone: string }> = {
   SAFE: {
     label: "안전",
-    desc: "등기부상 위험 신호가 발견되지 않았습니다",
-    next: "등기부 밖의 위험(선순위 임차인·세금 체납·시세)은 아래 공공 서비스에서 따로 확인하세요.",
+    desc: "등기부에서는 걱정할 만한 내용이 보이지 않았어요",
+    next: "그래도 등기부에 안 나오는 위험(먼저 사는 세입자, 세금 체납, 시세)은 아래 공공 서비스에서 따로 확인해 주세요.",
     Icon: ShieldCheckIcon,
     tone: "border-safe/25 bg-safe-soft",
     iconTone: "bg-safe text-surface",
   },
   CAUTION: {
     label: "주의",
-    desc: "확인이 필요한 사항이 있습니다",
-    next: "아래 ‘주의’ 항목의 금액과 순위를 보증금과 비교하고, 중개사에게 설명을 요청하세요.",
+    desc: "한번 따져 봐야 할 내용이 있어요",
+    next: "아래 ‘주의’ 항목의 금액과 순서를 내 보증금과 비교해 보고, 중개사에게 설명을 부탁해 보세요.",
     Icon: InfoIcon,
     tone: "border-caution/25 bg-caution-soft",
     iconTone: "bg-caution text-surface",
   },
   DANGER: {
     label: "위험",
-    desc: "위험 요소가 발견되었습니다",
-    next: "계약을 서두르지 말고, 아래 ‘위험’ 항목을 법률 전문가에게 반드시 확인받으세요.",
+    desc: "보증금을 잃을 수 있는 내용이 있어요",
+    next: "계약은 잠시 멈추고, 아래 ‘위험’ 항목을 법률 전문가에게 꼭 확인받아 보세요.",
     Icon: AlertIcon,
     tone: "border-danger/25 bg-danger-soft",
     iconTone: "bg-danger text-surface",
@@ -106,7 +106,7 @@ function Card({
   return (
     <section className={`${card} p-5 sm:p-6`}>
       <div className="mb-4 flex items-center justify-between gap-2">
-        <h2 className="flex items-center gap-2 text-base font-bold">
+        <h2 className="flex items-center gap-2 text-base font-semibold">
           {Icon !== undefined && <Icon width={20} height={20} className="text-brand" />}
           {title}
         </h2>
@@ -197,7 +197,7 @@ function Checklist({ items }: { items: ChecklistItem[] }) {
               {group.items.map((it) => {
                 const style = STATUS_STYLE[it.status];
                 return (
-                  <li key={it.id} className="relative overflow-hidden rounded-xl border border-line bg-surface p-4 pl-5">
+                  <li key={it.id} className="relative overflow-hidden rounded-2xl bg-surface p-4 pl-5 ring-1 ring-line/70">
                     <span aria-hidden="true" className={`absolute inset-y-0 left-0 w-1 ${style?.bar ?? "bg-line"}`} />
                     <div className="flex items-start justify-between gap-3">
                       <span className="text-sm font-semibold leading-relaxed">{it.item}</span>
@@ -208,7 +208,7 @@ function Checklist({ items }: { items: ChecklistItem[] }) {
                     <p className="mt-1.5 text-sm leading-relaxed text-muted">{it.detail}</p>
                     {/* 모델이 채웠을 때만 온다. 항목 자체는 늘 있다. */}
                     {it.analysis != null && (
-                      <div className="mt-3 flex flex-col gap-1.5 rounded-lg bg-surface-muted p-3 text-sm leading-relaxed">
+                      <div className="mt-3 flex flex-col gap-1.5 rounded-xl bg-surface-muted p-3 text-sm leading-relaxed">
                         <p>{it.analysis.findings}</p>
                         <p className="text-muted">{it.analysis.leaseImpact}</p>
                       </div>
@@ -227,7 +227,7 @@ function Checklist({ items }: { items: ChecklistItem[] }) {
 function Risk({ summary }: { summary: RiskSummary }) {
   return (
     <>
-      {summary.leaseType != null && <p className="text-xs text-muted">임대차 유형: {summary.leaseType}</p>}
+      {summary.leaseType != null && <p className="text-xs text-muted">계약 유형: {summary.leaseType}</p>}
       <p className="mt-2 text-sm leading-relaxed">{summary.content}</p>
     </>
   );
@@ -237,7 +237,7 @@ function Recommendations({ items }: { items: Recommendation[] }) {
   return (
     <ol className="flex flex-col gap-3">
       {items.map((r, i) => (
-        <li key={`${i}-${r.title}`} className="flex gap-3 rounded-xl border border-line p-4">
+        <li key={`${i}-${r.title}`} className="flex gap-3 rounded-2xl p-4 ring-1 ring-line/70">
           <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-surface-muted text-xs font-bold text-muted">
             {i + 1}
           </span>
@@ -264,7 +264,7 @@ function ReferenceList({ title, items }: { title: string; items: ReferenceItem[]
       <h3 className="text-xs font-bold text-muted">{title}</h3>
       <ul className="flex flex-col gap-2">
         {items.map((r) => (
-          <li key={`${r.source}-${r.article}-${r.title}`} className="rounded-xl bg-surface-muted p-4 text-sm">
+          <li key={`${r.source}-${r.article}-${r.title}`} className="rounded-2xl bg-surface-muted p-4 text-sm">
             <p className="font-semibold">
               {r.title} <span className="font-normal text-subtle">{r.article}</span>
             </p>
@@ -279,7 +279,7 @@ function ReferenceList({ title, items }: { title: string; items: ReferenceItem[]
 function HomeLink() {
   return (
     <Link href="/#analyze" className={buttonSecondary}>
-      새 분석 시작하기
+      새로 분석하기
       <ArrowRightIcon width={16} height={16} />
     </Link>
   );
@@ -287,11 +287,11 @@ function HomeLink() {
 
 function Disclaimer() {
   return (
-    <p className="flex gap-2 rounded-xl border border-line bg-surface-muted px-4 py-3 text-xs leading-relaxed text-muted">
+    <p className="flex gap-2 rounded-2xl bg-surface-muted px-4 py-3 text-xs leading-relaxed text-muted">
       <ScaleIcon width={16} height={16} className="mt-0.5 shrink-0" />
       <span>
-        이 결과는 등기부등본에 적힌 내용을 AI 가 읽고 정리한 참고 정보이며 법률 자문이 아닙니다. AI 가 내용을 잘못 읽을 수
-        있으니 중요한 항목은 등기부 원문과 대조하고, 계약 전 전문가와 함께 확인하세요.
+        이 결과는 등기부등본 내용을 AI가 읽고 정리한 참고 정보예요. 법률 자문은 아니에요. AI가 잘못 읽을 수도 있으니
+        중요한 항목은 등기부 원문과 맞춰 보시고, 계약 전에는 전문가와 함께 확인해 주세요.
       </span>
     </p>
   );
@@ -302,13 +302,13 @@ function Analysis({ analysis }: { analysis: DeedAnalysis }) {
   if (!analysis.isValidDeed) {
     return (
       <div className={`${card} flex w-full max-w-md flex-col items-center gap-5 p-8 text-center`}>
-        <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-caution-soft text-caution">
+        <span className="flex h-14 w-14 items-center justify-center rounded-full bg-caution-soft text-caution">
           <DocumentIcon width={28} height={28} />
         </span>
         <p role="alert" className="text-base font-semibold">
-          {analysis.reason ?? "등기부등본으로 보이지 않습니다."}
+          {analysis.reason ?? "등기부등본이 아닌 것 같아요."}
         </p>
-        <p className="text-sm text-muted">인터넷등기소에서 받은 등기사항전부증명서 PDF 를 올려 주세요.</p>
+        <p className="text-sm text-muted">인터넷등기소에서 받은 등기사항전부증명서 PDF를 올려 주세요.</p>
         <HomeLink />
       </div>
     );
@@ -328,21 +328,21 @@ function Analysis({ analysis }: { analysis: DeedAnalysis }) {
           </span>
           <div className="flex flex-1 flex-col gap-3">
             <div>
-              <p className="text-xs font-semibold text-muted">안전 등급</p>
-              <p className="text-3xl font-extrabold tracking-tight">{safety.label}</p>
+              <p className="text-xs font-medium text-muted">이 집의 등급</p>
+              <p className="text-3xl font-bold tracking-tight">{safety.label}</p>
               <p className="mt-1 text-base font-medium">{safety.desc}</p>
             </div>
             {checklist.length > 0 && <StatusCounts items={checklist} />}
-            <p className="rounded-xl bg-surface/70 px-3 py-2 text-sm leading-relaxed">
-              <span className="font-semibold">다음 할 일 · </span>
-              {safety.next}
-            </p>
+            <div className="flex flex-col gap-0.5 rounded-2xl bg-surface/75 px-4 py-3 text-sm leading-relaxed">
+              <p className="font-semibold">이렇게 해 보세요</p>
+              <p>{safety.next}</p>
+            </div>
           </div>
         </section>
       )}
 
       {analysis.analysisSummary != null && (
-        <Card title="분석 결과 요약" Icon={CheckCircleIcon}>
+        <Card title="한눈에 보기" Icon={CheckCircleIcon}>
           <p className="text-[15px] leading-relaxed">{analysis.analysisSummary}</p>
         </Card>
       )}
@@ -350,13 +350,13 @@ function Analysis({ analysis }: { analysis: DeedAnalysis }) {
       {(analysis.propertyInfo != null || analysis.ownershipInfo != null) && (
         <div className="grid gap-4 md:grid-cols-2">
           {analysis.propertyInfo != null && (
-            <Card title="부동산 정보" Icon={HomeIcon}>
+            <Card title="집 정보" Icon={HomeIcon}>
               <Property info={analysis.propertyInfo} />
             </Card>
           )}
           {analysis.ownershipInfo != null && (
             <Card
-              title="소유권 정보"
+              title="소유자 정보"
               Icon={KeyIcon}
               trailing={
                 analysis.ownershipInfo.frequentTransferWarning === true ? (
@@ -371,14 +371,14 @@ function Analysis({ analysis }: { analysis: DeedAnalysis }) {
       )}
 
       {checklist.length > 0 && (
-        <Card title="안전 체크리스트" Icon={ListCheckIcon}>
+        <Card title="항목별 확인 결과" Icon={ListCheckIcon}>
           <Checklist items={checklist} />
         </Card>
       )}
 
       {analysis.riskSummary != null && (
         <Card
-          title="위험요소 종합 요약"
+          title="위험 요소 정리"
           Icon={AlertIcon}
           trailing={
             analysis.riskSummary.level != null ? (
@@ -391,7 +391,7 @@ function Analysis({ analysis }: { analysis: DeedAnalysis }) {
       )}
 
       {analysis.recommendations != null && analysis.recommendations.length > 0 && (
-        <Card title="권고 사항" Icon={CheckCircleIcon}>
+        <Card title="계약 전에 해 두면 좋은 일" Icon={CheckCircleIcon}>
           <Recommendations items={analysis.recommendations} />
         </Card>
       )}
@@ -400,14 +400,14 @@ function Analysis({ analysis }: { analysis: DeedAnalysis }) {
       <PublicChecks />
 
       {analysis.overallSummary != null && (
-        <Card title="전체 요약" Icon={DocumentIcon}>
+        <Card title="정리하면" Icon={DocumentIcon}>
           <p className="text-sm leading-relaxed">{analysis.overallSummary}</p>
         </Card>
       )}
 
       {/* 등급이 SAFE 가 아니어도 검색이 실패하면 없다. 등급만 보고 존재를 단정하지 않는다. */}
       {hasRefs && (
-        <Card title="관련 법령·사례" Icon={ScaleIcon}>
+        <Card title="참고한 법령과 사례" Icon={ScaleIcon}>
           <div className="flex flex-col gap-5">
             {refs?.laws != null && refs.laws.length > 0 && <ReferenceList title="법령" items={refs.laws} />}
             {refs?.cases != null && refs.cases.length > 0 && <ReferenceList title="사례" items={refs.cases} />}
@@ -432,7 +432,7 @@ export function ResultView({ jobId }: { jobId: string }) {
       <div className={`${card} flex w-full max-w-md flex-col items-center gap-4 p-10`}>
         <span className="h-8 w-8 animate-spin rounded-full border-[3px] border-brand-soft border-t-brand" aria-hidden="true" />
         <p role="status" className="text-sm text-muted">
-          결과를 불러오는 중…
+          결과를 불러오고 있어요…
         </p>
       </div>
     );
@@ -441,7 +441,7 @@ export function ResultView({ jobId }: { jobId: string }) {
   // 실패한 작업은 서버가 사유를 담아 준다. 있으면 그것을 쓴다 — 실제 응답에서 확인했다.
   const missing =
     job?.result == null
-      ? (job?.status === "FAILED" ? job.description : null) ?? "결과를 찾을 수 없습니다."
+      ? (job?.status === "FAILED" ? job.description : null) ?? "결과를 찾지 못했어요."
       : null;
   const message = error ?? missing;
   if (message !== null) {

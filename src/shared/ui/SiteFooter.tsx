@@ -7,7 +7,7 @@ import { LogoMark } from "./icons";
  */
 export function SiteFooter() {
   return (
-    <footer className="mt-auto border-t border-line bg-surface">
+    <footer className="mt-auto border-t border-line/70 bg-surface">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-10 sm:px-6">
         <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-start">
           <div className="flex flex-col gap-2">
@@ -17,7 +17,7 @@ export function SiteFooter() {
                 Safe<span className="text-brand">Home</span>
               </span>
             </div>
-            <p className="text-sm text-muted">계약 전에, 등기부등본으로 먼저 확인하세요.</p>
+            <p className="text-sm text-muted">계약 전에, 등기부등본으로 먼저 확인해 보세요.</p>
           </div>
           <nav aria-label="바닥 메뉴" className="flex gap-5 text-sm text-muted">
             <Link href="/#analyze" className="hover:text-ink">분석하기</Link>
@@ -25,10 +25,10 @@ export function SiteFooter() {
             <Link href="/history" className="hover:text-ink">분석 이력</Link>
           </nav>
         </div>
-        <p className="rounded-xl bg-surface-muted px-4 py-3 text-xs leading-relaxed text-muted">
-          SafeHome 의 분석은 등기부등본에 적힌 내용을 바탕으로 한 <strong className="font-semibold text-ink">참고 정보</strong>이며,
-          법률 자문이나 권리 보증이 아닙니다. 등기부에 나타나지 않는 위험(선순위 임차인, 미납 세금, 시세 변동 등)은
-          확인되지 않으므로, 계약 전 공인중개사·법률 전문가와 함께 최종 확인하세요.
+        <p className="rounded-2xl bg-surface-muted px-4 py-3 text-xs leading-relaxed text-muted">
+          SafeHome의 분석은 등기부등본에 적힌 내용을 바탕으로 한 <strong className="font-semibold text-ink">참고 정보</strong>예요.
+          법률 자문이나 권리 보증이 아니며, 등기부에 나오지 않는 위험(먼저 사는 세입자, 밀린 세금, 시세 변동 등)은
+          확인하지 못해요. 계약 전에는 공인중개사나 법률 전문가와 함께 꼭 확인해 주세요.
         </p>
       </div>
     </footer>

@@ -59,7 +59,7 @@ describe("HistoryList", () => {
     getMyJobsMock.mockResolvedValue(page([]));
     render(<HistoryList />);
 
-    await screen.findByText("분석 이력이 없습니다");
+    await screen.findByText("아직 분석한 기록이 없어요");
     // 첫 화면은 안내가 길어서, 맨 위가 아니라 업로드 영역으로 바로 보낸다.
     expect(link("분석 시작하기").getAttribute("href")).toBe("/#analyze");
   });
@@ -85,7 +85,7 @@ describe("HistoryList", () => {
 
     await screen.findByText("실패.pdf");
     expect(screen.queryByRole("link", { name: /실패\.pdf/ })).toBeNull();
-    expect(screen.getByText(/다시 업로드해 주세요/)).toBeTruthy();
+    expect(screen.getByText(/다른 파일로 다시 올려 주세요/)).toBeTruthy();
   });
 
   it("날짜를 시간대와 무관하게 표시한다", async () => {

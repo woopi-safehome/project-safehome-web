@@ -9,8 +9,8 @@ export default function HistoryPage() {
   return (
     <main className="flex flex-1 flex-col items-center gap-8 px-4 py-10 sm:py-14">
       <div className="flex w-full max-w-2xl flex-col gap-1">
-        <p className="text-sm font-semibold text-brand">내 기록</p>
-        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">분석 이력</h1>
+        <p className="text-sm font-medium text-brand">내 기록</p>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">지난 분석 기록</h1>
       </div>
       <HistoryList />
       <AccountActions />

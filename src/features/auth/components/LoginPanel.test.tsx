@@ -17,6 +17,6 @@ describe("LoginPanel", () => {
     render(<LoginPanel />);
 
     expect((screen.getByRole("button", { name: "카카오로 시작하기" }) as HTMLButtonElement).disabled).toBe(true);
-    expect(screen.getByRole("status").textContent).toContain("설정이 아직 없습니다");
+    expect(screen.getByRole("status").textContent).toContain("아직 준비 중이에요");
   });
 });

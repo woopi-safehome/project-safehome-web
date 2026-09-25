@@ -67,7 +67,7 @@ describe("AnalyzingView", () => {
     serverSends();
     render(<AnalyzingView jobId="j1" />);
 
-    expect(screen.getByRole("status").textContent).toContain("읽어오고 있어요");
+    expect(screen.getByRole("status").textContent).toContain("등기부등본을 읽고 있어요");
   });
 
   it("단계가 바뀌면 이어서 보여준다", async () => {
@@ -77,7 +77,7 @@ describe("AnalyzingView", () => {
     await passGate();
 
     await waitFor(() =>
-      expect(screen.getByRole("status").textContent).toContain("꼼꼼히 살펴보고 있어요"),
+      expect(screen.getByRole("status").textContent).toContain("하나씩 살펴보고 있어요"),
     );
   });
 
@@ -88,16 +88,16 @@ describe("AnalyzingView", () => {
 
     await passGate();
     await waitFor(() =>
-      expect(screen.getByRole("status").textContent).toContain("꼼꼼히 살펴보고 있어요"),
+      expect(screen.getByRole("status").textContent).toContain("하나씩 살펴보고 있어요"),
     );
 
     // 아직 다음 단계로 넘어가면 안 된다.
     await vi.advanceTimersByTimeAsync(500);
-    expect(screen.getByRole("status").textContent).toContain("꼼꼼히 살펴보고 있어요");
+    expect(screen.getByRole("status").textContent).toContain("하나씩 살펴보고 있어요");
 
     await passGate();
     await waitFor(() =>
-      expect(screen.getByRole("status").textContent).toContain("마무리하고"),
+      expect(screen.getByRole("status").textContent).toContain("결과를 정리하고"),
     );
   });
 

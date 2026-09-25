@@ -1,4 +1,5 @@
 import { AlertIcon, InfoIcon, ShieldCheckIcon } from "@/shared/ui/icons";
+import { card } from "@/shared/ui/styles";
 import { SectionHeading } from "./SectionHeading";
 
 /**
@@ -10,46 +11,46 @@ const GRADES = [
     Icon: ShieldCheckIcon,
     label: "안전",
     tone: "bg-safe-soft text-safe",
-    meaning: "등기부에서 위험 신호가 발견되지 않았어요.",
-    next: "등기부 밖의 위험(선순위 임차인·세금 체납·시세)은 따로 확인하세요.",
+    meaning: "등기부에서는 걱정할 만한 내용이 보이지 않았어요.",
+    next: "그래도 등기부에 안 나오는 위험(먼저 사는 세입자, 집주인 세금 체납, 시세)은 따로 확인해 주세요.",
   },
   {
     Icon: InfoIcon,
     label: "주의",
     tone: "bg-caution-soft text-caution",
-    meaning: "근저당·선순위 권리처럼 따져 봐야 할 권리가 있어요.",
-    next: "금액과 순위를 보증금과 비교하고, 중개사에게 설명을 요청하세요.",
+    meaning: "근저당처럼 한번 따져 봐야 할 권리가 있어요.",
+    next: "금액과 순서를 내 보증금과 비교해 보고, 중개사에게 설명을 부탁해 보세요.",
   },
   {
     Icon: AlertIcon,
     label: "위험",
     tone: "bg-danger-soft text-danger",
-    meaning: "압류·경매·신탁처럼 보증금을 잃을 수 있는 신호가 있어요.",
-    next: "계약을 서두르지 말고, 반드시 법률 전문가의 확인을 받으세요.",
+    meaning: "압류나 경매, 신탁처럼 보증금을 잃을 수 있는 내용이 있어요.",
+    next: "계약은 잠시 멈추고, 법률 전문가에게 꼭 확인을 받아 보세요.",
   },
 ] as const;
 
 export function GradeGuide() {
   return (
-    <section aria-labelledby="grade-title" className="flex flex-col gap-12">
+    <section aria-labelledby="grade-title" className="flex flex-col gap-10">
       <SectionHeading
         id="grade-title"
         eyebrow="결과 읽는 법"
-        title="세 가지 등급으로 알려드려요"
-        description="가장 나쁜 항목 하나가 전체 등급을 정해요. 위험 항목이 하나라도 있으면 ‘위험’이에요."
+        title="결과는 세 가지 등급으로 나와요"
+        description="항목 가운데 가장 나쁜 결과가 전체 등급이 돼요. 하나라도 ‘위험’이면 전체도 ‘위험’이에요."
       />
       <div className="grid gap-5 md:grid-cols-3">
         {GRADES.map(({ Icon, label, tone, meaning, next }) => (
-          <article key={label} className="flex flex-col gap-4 rounded-2xl border border-line bg-surface p-6">
-            <span className={`inline-flex w-fit items-center gap-2 rounded-full px-3.5 py-1.5 text-sm font-bold ${tone}`}>
+          <article key={label} className={`${card} flex flex-col gap-4 p-6`}>
+            <span className={`inline-flex w-fit items-center gap-2 rounded-full px-3.5 py-1.5 text-sm font-semibold ${tone}`}>
               <Icon width={18} height={18} />
               {label}
             </span>
-            <p className="font-semibold leading-relaxed">{meaning}</p>
-            <p className="mt-auto rounded-xl bg-surface-muted p-3 text-sm leading-relaxed text-muted">
-              <span className="font-semibold text-ink">다음 할 일 · </span>
-              {next}
-            </p>
+            <p className="font-medium leading-relaxed">{meaning}</p>
+            <div className="mt-auto flex flex-col gap-1 rounded-2xl bg-surface-muted p-4 text-sm leading-relaxed">
+              <p className="font-semibold">이렇게 해 보세요</p>
+              <p className="text-muted">{next}</p>
+            </div>
           </article>
         ))}
       </div>

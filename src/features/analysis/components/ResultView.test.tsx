@@ -39,7 +39,7 @@ describe("ResultView", () => {
     getJobMock.mockReturnValue(new Promise(() => {}));
     render(<ResultView jobId="j1" />);
 
-    expect(screen.getByRole("status").textContent).toContain("불러오는 중");
+    expect(screen.getByRole("status").textContent).toContain("불러오고 있어요");
   });
 
   it("서버가 정한 등급을 그대로 보여준다", async () => {
@@ -48,7 +48,7 @@ describe("ResultView", () => {
     render(<ResultView jobId="j1" />);
 
     await waitFor(() => expect(screen.getByText("위험")).toBeTruthy());
-    expect(screen.getByText("위험 요소가 발견되었습니다")).toBeTruthy();
+    expect(screen.getByText("보증금을 잃을 수 있는 내용이 있어요")).toBeTruthy();
   });
 
   it("등급이 없으면 등급 영역을 비운다", async () => {
@@ -66,7 +66,7 @@ describe("ResultView", () => {
     render(<ResultView jobId="j1" />);
 
     expect((await screen.findByRole("alert")).textContent).toBe("등기부등본이 아닙니다.");
-    expect(screen.queryByText("안전 체크리스트")).toBeNull();
+    expect(screen.queryByText("항목별 확인 결과")).toBeNull();
   });
 
   it("체크리스트의 analysis 는 있을 때만 보여준다", async () => {
@@ -107,7 +107,7 @@ describe("ResultView", () => {
     render(<ResultView jobId="j1" />);
 
     await waitFor(() => expect(screen.getByText("위험")).toBeTruthy());
-    expect(screen.queryByText("관련 법령·사례")).toBeNull();
+    expect(screen.queryByText("참고한 법령과 사례")).toBeNull();
   });
 
   it("references 의 한쪽만 와도 그쪽만 보여준다", async () => {
@@ -160,7 +160,7 @@ describe("ResultView", () => {
     await waitFor(() => expect(screen.getByText("요약입니다")).toBeTruthy());
     expect(screen.getByText("단독소유")).toBeTruthy();
     expect(screen.queryByText("지분")).toBeNull();
-    expect(screen.queryByText("위험요소 종합 요약")).toBeNull();
+    expect(screen.queryByText("위험 요소 정리")).toBeNull();
   });
 
   it("등급과 무관하게 등기부 밖의 위험을 확인할 공공 서비스로 이어 준다", async () => {
@@ -182,14 +182,14 @@ describe("ResultView", () => {
     render(<ResultView jobId="j1" />);
 
     await screen.findByRole("alert");
-    expect(screen.queryByText("등기부로 알 수 없는 것도 확인하세요")).toBeNull();
+    expect(screen.queryByText("등기부로 알 수 없는 것도 확인해 보세요")).toBeNull();
   });
 
   it("결과가 비어 있으면 찾을 수 없다고 알린다", async () => {
     serverReturns(null);
     render(<ResultView jobId="j1" />);
 
-    expect((await screen.findByRole("alert")).textContent).toBe("결과를 찾을 수 없습니다.");
+    expect((await screen.findByRole("alert")).textContent).toBe("결과를 찾지 못했어요.");
   });
 
   it("조회가 실패하면 다시 시도할 수 있다", async () => {

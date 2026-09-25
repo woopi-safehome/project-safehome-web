@@ -6,7 +6,8 @@ import { Cautions } from "@/features/guide/components/Cautions";
 import { Faq } from "@/features/guide/components/Faq";
 import { CallToAction } from "@/features/guide/components/CallToAction";
 import { HeroIllustration } from "@/shared/ui/illustrations";
-import { CheckCircleIcon, ClockIcon, ListCheckIcon, LockIcon } from "@/shared/ui/icons";
+import { ClockIcon, ListCheckIcon, LockIcon } from "@/shared/ui/icons";
+import { card } from "@/shared/ui/styles";
 
 /**
  * 라우팅과 조립만 한다. 화면의 로직은 features 가 갖는다.
@@ -15,51 +16,42 @@ import { CheckCircleIcon, ClockIcon, ListCheckIcon, LockIcon } from "@/shared/ui
  * 업로드는 맨 위에 두어 한 번에 닿게 하고, 사용법·주의사항은 그 아래로 이어 읽게 한다.
  */
 const TRUST_POINTS = [
-  { Icon: LockIcon, label: "로그인 없이 바로" },
-  { Icon: ClockIcon, label: "1분 안팎" },
-  { Icon: ListCheckIcon, label: "11개 항목 점검" },
+  { Icon: LockIcon, label: "회원가입 없이" },
+  { Icon: ClockIcon, label: "1분 정도면 끝나요" },
+  { Icon: ListCheckIcon, label: "11가지 항목 확인" },
 ] as const;
 
 export default function Home() {
   return (
     <main>
-      <section className="relative overflow-hidden border-b border-line bg-gradient-to-b from-brand-soft/70 to-canvas">
+      <section className="relative overflow-hidden bg-gradient-to-b from-brand-soft/60 via-canvas to-canvas">
         <div className="mx-auto grid w-full max-w-6xl items-center gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:py-20">
           <div className="flex flex-col gap-6">
-            <p className="inline-flex w-fit items-center gap-1.5 rounded-full border border-brand/20 bg-surface px-3 py-1.5 text-xs font-semibold text-brand">
-              <CheckCircleIcon width={16} height={16} />
-              전세사기 예방 · 등기부등본 AI 분석
-            </p>
-            <h1 className="text-3xl font-extrabold leading-tight tracking-tight sm:text-5xl sm:leading-tight">
-              계약 전에,
+            <p className="text-sm font-medium text-brand">전세·월세 계약을 앞두고 계신가요?</p>
+            <h1 className="text-3xl font-bold leading-snug tracking-tight sm:text-[2.75rem] sm:leading-[1.25]">
+              도장 찍기 전에,
               <br />
-              <span className="text-brand">등기부등본</span>부터 확인하세요
+              <span className="text-brand">등기부</span>부터 같이 확인해요
             </h1>
-            <p className="max-w-lg text-base leading-relaxed text-muted sm:text-lg">
-              등기부등본 PDF 를 올리면 소유권·근저당·압류·신탁 등 보증금을 위협하는 신호를 AI 가 찾아
-              알기 쉬운 말로 정리해 드려요.
+            <p className="max-w-lg text-base leading-relaxed text-muted sm:text-[17px]">
+              등기부등본은 처음 보면 무엇이 중요한지 알기 어려워요. PDF를 올려 주시면 보증금에 영향을 줄 수 있는 내용을
+              찾아서 쉬운 말로 풀어 드릴게요.
             </p>
-            <ul className="flex flex-wrap gap-2">
+            <ul className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted">
               {TRUST_POINTS.map(({ Icon, label }) => (
-                <li
-                  key={label}
-                  className="inline-flex items-center gap-1.5 rounded-full bg-surface px-3.5 py-2 text-sm font-medium shadow-sm ring-1 ring-line"
-                >
+                <li key={label} className="inline-flex items-center gap-1.5">
                   <Icon width={16} height={16} className="text-brand" />
                   {label}
                 </li>
               ))}
             </ul>
-            <HeroIllustration className="hidden h-60 w-auto self-start lg:block" />
+            <HeroIllustration className="hidden h-56 w-auto self-start opacity-90 lg:block" />
           </div>
 
-          <div
-            id="analyze"
-            className="scroll-mt-24 rounded-3xl border border-line bg-surface p-6 shadow-xl shadow-brand/5 sm:p-8"
-          >
+          <div id="analyze" className={`${card} scroll-mt-24 p-6 sm:p-8`}>
             <div className="mb-6 flex flex-col gap-1">
-              <h2 className="text-xl font-bold">등기부등본 분석하기</h2>
-              <p className="text-sm text-muted">인터넷등기소에서 받은 PDF 를 올려 주세요.</p>
+              <h2 className="text-xl font-bold">등기부등본 올리기</h2>
+              <p className="text-sm text-muted">인터넷등기소에서 저장한 PDF 파일이면 돼요.</p>
             </div>
             <DeedUploadForm />
           </div>

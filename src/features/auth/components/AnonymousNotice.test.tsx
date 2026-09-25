@@ -14,7 +14,7 @@ describe("AnonymousNotice", () => {
     // 말해 주지 않으면 사용자는 창을 닫은 뒤에야 안다.
     render(<AnonymousNotice />);
 
-    expect(screen.getByText(/다시 찾을 수 없습니다/)).toBeTruthy();
+    expect(screen.getByText(/다시 찾을 수 없어요/)).toBeTruthy();
     expect(screen.getByRole("link", { name: "로그인" }).getAttribute("href")).toBe("/login");
   });
 

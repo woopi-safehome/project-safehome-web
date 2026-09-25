@@ -4,30 +4,31 @@
  * 디자인 토큰. 화면은 색을 직접 쓰지 않고 아래 이름으로만 쓴다 —
  * 다크 모드는 값만 바꾸면 따라오고, 배색을 고칠 때 한 곳만 보면 된다.
  *
- * 브랜드는 **신뢰를 주는 파랑**, 판정 상태는 양호·주의·위험 세 색이다.
- * 상태 색은 등급을 보여 줄 때만 쓴다. 장식에 쓰면 사용자가 위험 신호로 오해한다.
+ * 톤은 **부드럽지만 믿음이 가는** 쪽이다. 차가운 회청색 대신 살짝 따뜻한 미색 바탕에,
+ * 채도를 한 단계 낮춘 차분한 파랑을 브랜드로 쓴다. 글자색도 새까만 남색 대신 먹색에 가깝게 둔다.
+ * 판정 상태는 양호·주의·위험 세 색이다. 상태 색은 등급을 보여 줄 때만 쓴다 — 장식에 쓰면 위험 신호로 읽힌다.
  */
 :root {
-  --canvas: #f5f7fb;
+  --canvas: #f8f7f4;
   --surface: #ffffff;
-  --surface-muted: #f0f3f9;
-  --ink: #0f1b2d;
-  --muted: #56657c;
-  --subtle: #8391a7;
-  --line: #e2e7ef;
+  --surface-muted: #f3f1ec;
+  --ink: #1f2733;
+  --muted: #5d6675;
+  --subtle: #8e96a3;
+  --line: #e9e6df;
 
-  --brand: #1f4fd1;
-  --brand-strong: #173c9e;
-  --brand-soft: #e9effd;
+  --brand: #2f64c8;
+  --brand-strong: #244f9f;
+  --brand-soft: #ebf1fb;
   --brand-ink: #ffffff;
-  --navy: #0b1f44;
+  --navy: #1c2a44;
 
-  --safe: #0d8a5c;
-  --safe-soft: #e5f5ee;
-  --caution: #b26a00;
-  --caution-soft: #fff3de;
-  --danger: #c62f3a;
-  --danger-soft: #fdebec;
+  --safe: #1e8560;
+  --safe-soft: #e8f5ef;
+  --caution: #b06e12;
+  --caution-soft: #fdf3e2;
+  --danger: #c0443d;
+  --danger-soft: #fcecea;
 
   /* 이전 이름. 남아 있는 곳이 있어도 깨지지 않게 둔다. */
   --background: var(--canvas);
@@ -36,26 +37,26 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --canvas: #0a111e;
-    --surface: #111a2b;
-    --surface-muted: #16223a;
-    --ink: #e7edf6;
-    --muted: #9aa8bd;
-    --subtle: #6d7c93;
-    --line: #22304a;
+    --canvas: #131519;
+    --surface: #1b1e24;
+    --surface-muted: #22262e;
+    --ink: #eceae6;
+    --muted: #a4a9b2;
+    --subtle: #767d88;
+    --line: #2d313a;
 
-    --brand: #6f97ff;
-    --brand-strong: #93b1ff;
-    --brand-soft: #172647;
-    --brand-ink: #0a111e;
-    --navy: #070d19;
+    --brand: #7ea3ee;
+    --brand-strong: #a3bff4;
+    --brand-soft: #1f2a40;
+    --brand-ink: #131519;
+    --navy: #0e1016;
 
-    --safe: #4cc99a;
-    --safe-soft: #0f2a21;
-    --caution: #f2b44a;
-    --caution-soft: #2d2311;
-    --danger: #ff7a82;
-    --danger-soft: #34161b;
+    --safe: #5cc79e;
+    --safe-soft: #16291f;
+    --caution: #eab160;
+    --caution-soft: #2d2415;
+    --danger: #f08a82;
+    --danger-soft: #331b1a;
   }
 }
 

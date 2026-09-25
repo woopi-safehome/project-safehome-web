@@ -1,5 +1,6 @@
 import type { ComponentType, SVGProps } from "react";
 import { AlertIcon, DocumentIcon, HomeIcon, KeyIcon } from "@/shared/ui/icons";
+import { card } from "@/shared/ui/styles";
 import { SectionHeading } from "./SectionHeading";
 
 /**
@@ -18,70 +19,70 @@ const GROUPS: Group[] = [
   {
     Icon: KeyIcon,
     category: "소유권",
-    summary: "집주인이 정말 이 집의 주인인가",
+    summary: "이 집의 진짜 주인은 누구일까",
     items: [
-      { name: "소유 형태", why: "공유지분이면 다른 공유자의 빚으로 경매될 수 있어요" },
-      { name: "소유권 이전 이력", why: "짧은 기간 잦은 이전은 갭투자·전세사기의 대표 패턴이에요" },
+      { name: "소유 형태", why: "여러 사람이 나눠 가진 집이면, 다른 공유자의 빚 때문에 경매로 넘어갈 수 있어요" },
+      { name: "소유권 이전 이력", why: "짧은 사이에 주인이 자주 바뀌었다면 갭투자나 전세사기에서 흔히 보이는 모습이에요" },
     ],
   },
   {
     Icon: HomeIcon,
     category: "담보권",
-    summary: "내 보증금보다 먼저 돌려받는 돈이 있는가",
+    summary: "내 보증금보다 먼저 받아 갈 돈이 있을까",
     items: [
-      { name: "근저당 설정", why: "대출 담보가 크면 경매 때 보증금이 남지 않을 수 있어요" },
-      { name: "선순위 권리", why: "나보다 앞선 권리는 경매 대금에서 먼저 가져가요" },
+      { name: "근저당 설정", why: "집을 담보로 빌린 돈이 많으면, 경매가 열렸을 때 보증금이 남지 않을 수 있어요" },
+      { name: "선순위 권리", why: "나보다 앞선 권리는 경매 대금에서 먼저 돈을 받아 가요" },
     ],
   },
   {
     Icon: AlertIcon,
     category: "법적 위험",
-    summary: "집주인이 분쟁이나 체납에 걸려 있는가",
+    summary: "집주인이 빚이나 세금 문제에 얽혀 있진 않을까",
     items: [
-      { name: "가압류·가처분", why: "집주인의 채무 분쟁 신호예요" },
-      { name: "압류", why: "세금 체납이면 국가가 보증금보다 먼저 가져가요" },
-      { name: "경매 진행", why: "경매개시결정이 있으면 계약 자체가 위험해요" },
+      { name: "가압류·가처분", why: "집주인이 누군가와 돈 문제로 다투고 있다는 신호예요" },
+      { name: "압류", why: "세금이 밀려 있으면 나라가 보증금보다 먼저 가져갈 수 있어요" },
+      { name: "경매 진행", why: "이미 경매가 시작된 집이라면 계약을 다시 생각해 봐야 해요" },
     ],
   },
   {
     Icon: DocumentIcon,
     category: "특수 권리",
-    summary: "계약을 무력화할 수 있는 권리가 있는가",
+    summary: "내 계약을 흔들 수 있는 권리가 있을까",
     items: [
-      { name: "전세권·임차권 등기", why: "기존 세입자의 보증금이 먼저 변제돼요" },
-      { name: "신탁등기", why: "신탁사 동의 없는 계약은 보호받지 못할 수 있어요" },
-      { name: "가등기", why: "본등기가 되면 임차권이 사라질 수 있어요" },
-      { name: "지상권", why: "건물 사용에 제한이 생길 수 있어요" },
+      { name: "전세권·임차권 등기", why: "앞서 살던 세입자의 보증금이 내 보증금보다 먼저 돌려받게 돼요" },
+      { name: "신탁등기", why: "집의 권한이 신탁회사에 있어서, 동의 없이 한 계약은 보호받지 못할 수 있어요" },
+      { name: "가등기", why: "나중에 본등기가 되면 내 임차권이 사라질 수도 있어요" },
+      { name: "지상권", why: "건물을 쓰는 데 제약이 생길 수 있어요" },
     ],
   },
 ];
 
 export function CheckCoverage() {
   return (
-    <section aria-labelledby="coverage-title" className="flex flex-col gap-12">
+    <section aria-labelledby="coverage-title" className="flex flex-col gap-10">
       <SectionHeading
         id="coverage-title"
-        eyebrow="점검 항목"
-        title="보증금을 지키는 데 필요한 11가지를 봐요"
-        description="전세사기 피해에서 반복된 위험 신호를 기준으로, 등기부등본의 권리관계를 항목별로 확인해요."
+        eyebrow="무엇을 보나요"
+        title="보증금과 관련된 11가지를 확인해요"
+        description="전세사기 사례에서 자주 나왔던 신호들을 기준으로 골랐어요. 등기부에 적힌 권리를 하나씩 따라가며 봐요."
       />
       <div className="grid gap-5 md:grid-cols-2">
         {GROUPS.map(({ Icon, category, summary, items }) => (
-          <article key={category} className="flex flex-col gap-4 rounded-2xl border border-line bg-surface p-6">
+          <article key={category} className={`${card} flex flex-col gap-5 p-6`}>
             <div className="flex items-center gap-3">
-              <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-soft text-brand">
+              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-soft text-brand">
                 <Icon width={22} height={22} />
               </span>
               <div>
-                <h3 className="text-lg font-bold">{category}</h3>
+                <h3 className="text-lg font-semibold">{category}</h3>
                 <p className="text-sm text-muted">{summary}</p>
               </div>
             </div>
             <ul className="flex flex-col divide-y divide-line">
               {items.map((item) => (
                 <li key={item.name} className="flex flex-col gap-0.5 py-3 first:pt-0 last:pb-0 sm:flex-row sm:gap-4">
-                  <span className="w-36 shrink-0 text-sm font-semibold">{item.name}</span>
-                  <span className="text-sm text-muted">{item.why}</span>
+                  <span className="w-36 shrink-0 text-sm font-medium">{item.name}</span>
+                  <span className="text-sm leading-relaxed text-muted">{item.why}</span>
                 </li>
               ))}
             </ul>

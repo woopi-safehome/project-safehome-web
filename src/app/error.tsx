@@ -12,11 +12,11 @@ import { buttonPrimary } from "@/shared/ui/styles";
 export default function Error({ retry }: { error: Error & { digest?: string }; retry: () => void }) {
   return (
     <main className="flex flex-1 flex-col items-center justify-center gap-5 px-6 py-20 text-center">
-      <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-danger-soft text-danger">
+      <span className="flex h-14 w-14 items-center justify-center rounded-full bg-danger-soft text-danger">
         <AlertIcon width={28} height={28} />
       </span>
       <p role="alert" className="text-base font-semibold">
-        화면을 표시하지 못했습니다.
+        화면을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.
       </p>
       <button type="button" onClick={retry} className={buttonPrimary}>
         <RefreshIcon width={18} height={18} />

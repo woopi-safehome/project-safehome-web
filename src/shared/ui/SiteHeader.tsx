@@ -1,15 +1,21 @@
 import Link from "next/link";
+import { loginAvailable } from "@/shared/config/env";
 import { LogoMark } from "./icons";
 
 /**
  * 모든 화면 위의 머리글. 어디서든 분석을 시작하고, 사용법을 찾을 수 있어야 한다.
  * 로그인 상태를 보지 않는다 — 공용 영역이라 기능(auth)을 알 수 없고,
  * 이력 화면이 로그인이 필요하면 그쪽에서 안내한다.
+ *
+ * **로그인을 쓸 수 없으면 "분석 이력"을 내놓지 않는다.** 이력은 로그인해야만 생기므로,
+ * 로그인이 안 되는 동안은 누르면 막다른 곳에 닿는 메뉴가 된다. 기준은 `loginAvailable` 이 갖는다.
  */
+export const HISTORY_ENABLED = loginAvailable;
+
 const NAV = [
   { href: "/guide", label: "이용 방법" },
-  { href: "/history", label: "분석 이력" },
-] as const;
+  ...(HISTORY_ENABLED ? [{ href: "/history", label: "분석 이력" }] : []),
+];
 
 export function SiteHeader() {
   return (

@@ -69,6 +69,42 @@ describe("ResultView", () => {
     expect(screen.queryByText("항목별 확인 결과")).toBeNull();
   });
 
+  it("살펴볼 항목을 먼저 펼치고, 양호한 항목은 접어 둔다", async () => {
+    // 위험 1건이 양호 여러 건 사이에 묻히지 않게 한다. 상태는 서버 값 그대로 쓴다.
+    const item = (id: string, status: "양호" | "주의" | "위험") => ({
+      id,
+      category: "담보권",
+      item: `항목 ${id}`,
+      status,
+      detail: `${id} 설명`,
+    });
+    serverReturns(valid({ checklist: [item("a", "양호"), item("b", "위험"), item("c", "양호"), item("d", "주의")] }));
+    const { container } = render(<ResultView jobId="j1" />);
+
+    await waitFor(() => expect(screen.getByText("양호한 항목 2건 보기")).toBeTruthy());
+    const folded = container.querySelector("details");
+    expect(folded?.open).toBe(false);
+    // 접힌 쪽에는 양호만, 펼친 쪽에는 나머지가 서버 순서대로 있다.
+    expect(folded?.textContent).toContain("항목 a");
+    expect(folded?.textContent).toContain("항목 c");
+    expect(folded?.textContent).not.toContain("항목 b");
+    const shown = [...container.querySelectorAll("li")]
+      .filter((li) => folded?.contains(li) === false)
+      .map((li) => li.textContent ?? "")
+      .filter((t) => t.startsWith("항목"));
+    expect(shown.map((t) => t.slice(0, 4))).toEqual(["항목 b", "항목 d"]);
+  });
+
+  it("모두 양호하면 접지 않는다", async () => {
+    serverReturns(
+      valid({ checklist: [{ id: "a", category: "소유권", item: "항목 a", status: "양호", detail: "a 설명" }] }),
+    );
+    const { container } = render(<ResultView jobId="j1" />);
+
+    await waitFor(() => expect(screen.getByText("항목 a")).toBeTruthy());
+    expect(container.querySelector("details")).toBeNull();
+  });
+
   it("체크리스트의 analysis 는 있을 때만 보여준다", async () => {
     // 항목 자체는 늘 오지만 analysis 는 모델이 채웠을 때만 붙는다.
     serverReturns(

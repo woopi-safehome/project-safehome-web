@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { LogoMark } from "./icons";
+import { HISTORY_ENABLED } from "./SiteHeader";
 
 /**
  * 모든 화면 아래의 바닥글. **면책 문구가 여기 있다** — 분석 결과는 법률 판단이 아니며,
@@ -22,7 +23,11 @@ export function SiteFooter() {
           <nav aria-label="바닥 메뉴" className="flex gap-5 text-sm text-muted">
             <Link href="/#analyze" className="hover:text-ink">분석하기</Link>
             <Link href="/guide" className="hover:text-ink">이용 방법</Link>
-            <Link href="/history" className="hover:text-ink">분석 이력</Link>
+            {HISTORY_ENABLED && (
+              <Link href="/history" className="hover:text-ink">
+                분석 이력
+              </Link>
+            )}
           </nav>
         </div>
         <p className="rounded-2xl bg-surface-muted px-4 py-3 text-xs leading-relaxed text-muted">

@@ -17,3 +17,12 @@ export const env = {
    */
   kakaoJsKey: process.env.NEXT_PUBLIC_KAKAO_JS_KEY ?? "",
 } as const;
+
+/**
+ * 웹에서 로그인이 **실제로 되는지.** 키만으로는 판단할 수 없다 — 카카오 토큰을 받는 부분
+ * (`features/auth/kakao.ts`)이 아직 비어 있어서, 키가 있어도 로그인은 실패한다.
+ * 그 함수를 채우는 작업에서 `env.kakaoJsKey !== ""` 로 바꾼다.
+ *
+ * 이 값으로 로그인이 있어야만 쓸모 있는 메뉴(분석 이력)를 감춘다.
+ */
+export const loginAvailable: boolean = false;

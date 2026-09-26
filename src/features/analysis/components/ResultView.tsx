@@ -7,6 +7,7 @@ import {
   AlertIcon,
   ArrowRightIcon,
   CheckCircleIcon,
+  ChevronDownIcon,
   DocumentIcon,
   HomeIcon,
   InfoIcon,
@@ -174,7 +175,29 @@ function StatusCounts({ items }: { items: ChecklistItem[] }) {
   );
 }
 
-function Checklist({ items }: { items: ChecklistItem[] }) {
+/** 항목 하나. */
+function ChecklistEntry({ it }: { it: ChecklistItem }) {
+  const style = STATUS_STYLE[it.status];
+  return (
+    <li className="relative overflow-hidden rounded-2xl bg-surface p-4 pl-5 ring-1 ring-line/70">
+      <span aria-hidden="true" className={`absolute inset-y-0 left-0 w-1 ${style?.bar ?? "bg-line"}`} />
+      <div className="flex items-start justify-between gap-3">
+        <span className="text-sm font-semibold leading-relaxed">{it.item}</span>
+        <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-bold ${style?.pill ?? ""}`}>{it.status}</span>
+      </div>
+      <p className="mt-1.5 text-sm leading-relaxed text-muted">{it.detail}</p>
+      {/* 모델이 채웠을 때만 온다. 항목 자체는 늘 있다. */}
+      {it.analysis != null && (
+        <div className="mt-3 flex flex-col gap-1.5 rounded-xl bg-surface-muted p-3 text-sm leading-relaxed">
+          <p>{it.analysis.findings}</p>
+          <p className="text-muted">{it.analysis.leaseImpact}</p>
+        </div>
+      )}
+    </li>
+  );
+}
+
+function GroupedList({ items }: { items: ChecklistItem[] }) {
   // 서버가 준 순서를 유지한 채 분류끼리만 묶는다. 순서를 바꾸는 것도 해석이다.
   const groups = items.reduce<{ category: string; items: ChecklistItem[] }[]>((acc, it) => {
     const last = acc[acc.length - 1];
@@ -194,32 +217,45 @@ function Checklist({ items }: { items: ChecklistItem[] }) {
               {group.category}
             </h3>
             <ul className="flex flex-col gap-2">
-              {group.items.map((it) => {
-                const style = STATUS_STYLE[it.status];
-                return (
-                  <li key={it.id} className="relative overflow-hidden rounded-2xl bg-surface p-4 pl-5 ring-1 ring-line/70">
-                    <span aria-hidden="true" className={`absolute inset-y-0 left-0 w-1 ${style?.bar ?? "bg-line"}`} />
-                    <div className="flex items-start justify-between gap-3">
-                      <span className="text-sm font-semibold leading-relaxed">{it.item}</span>
-                      <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-bold ${style?.pill ?? ""}`}>
-                        {it.status}
-                      </span>
-                    </div>
-                    <p className="mt-1.5 text-sm leading-relaxed text-muted">{it.detail}</p>
-                    {/* 모델이 채웠을 때만 온다. 항목 자체는 늘 있다. */}
-                    {it.analysis != null && (
-                      <div className="mt-3 flex flex-col gap-1.5 rounded-xl bg-surface-muted p-3 text-sm leading-relaxed">
-                        <p>{it.analysis.findings}</p>
-                        <p className="text-muted">{it.analysis.leaseImpact}</p>
-                      </div>
-                    )}
-                  </li>
-                );
-              })}
+              {group.items.map((it) => (
+                <ChecklistEntry key={it.id} it={it} />
+              ))}
             </ul>
           </div>
         );
       })}
+    </div>
+  );
+}
+
+/**
+ * 살펴봐야 할 항목(주의·위험)을 먼저 펼쳐 보이고, 양호한 항목은 접어 둔다.
+ * 11개가 같은 크기로 늘어서면 위험 1건이 양호 여러 건 사이에 묻힌다.
+ *
+ * **상태로 나누기만 한다.** 상태는 서버가 정한 값 그대로이고, 각 묶음 안의 순서도 서버 순서다.
+ * 모르는 상태가 오면 양호로 치지 않고 펼친 쪽에 둔다 — 숨겨서 놓치는 것보다 낫다.
+ */
+function Checklist({ items }: { items: ChecklistItem[] }) {
+  const attention = items.filter((it) => it.status !== "양호");
+  const fine = items.filter((it) => it.status === "양호");
+
+  // 전부 양호하면 접을 이유가 없다.
+  if (attention.length === 0) return <GroupedList items={items} />;
+
+  return (
+    <div className="flex flex-col gap-5">
+      <GroupedList items={attention} />
+      {fine.length > 0 && (
+        <details className="group rounded-2xl bg-surface-muted/70">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-medium [&::-webkit-details-marker]:hidden">
+            {`양호한 항목 ${fine.length}건 보기`}
+            <ChevronDownIcon width={18} height={18} className="shrink-0 text-subtle transition-transform group-open:rotate-180" />
+          </summary>
+          <div className="px-4 pb-4">
+            <GroupedList items={fine} />
+          </div>
+        </details>
+      )}
     </div>
   );
 }
@@ -347,29 +383,6 @@ function Analysis({ analysis }: { analysis: DeedAnalysis }) {
         </Card>
       )}
 
-      {(analysis.propertyInfo != null || analysis.ownershipInfo != null) && (
-        <div className="grid gap-4 md:grid-cols-2">
-          {analysis.propertyInfo != null && (
-            <Card title="집 정보" Icon={HomeIcon}>
-              <Property info={analysis.propertyInfo} />
-            </Card>
-          )}
-          {analysis.ownershipInfo != null && (
-            <Card
-              title="소유자 정보"
-              Icon={KeyIcon}
-              trailing={
-                analysis.ownershipInfo.frequentTransferWarning === true ? (
-                  <Chip tone="bg-caution-soft text-caution">잦은 이전</Chip>
-                ) : undefined
-              }
-            >
-              <Ownership info={analysis.ownershipInfo} />
-            </Card>
-          )}
-        </div>
-      )}
-
       {checklist.length > 0 && (
         <Card title="항목별 확인 결과" Icon={ListCheckIcon}>
           <Checklist items={checklist} />
@@ -403,6 +416,30 @@ function Analysis({ analysis }: { analysis: DeedAnalysis }) {
         <Card title="정리하면" Icon={DocumentIcon}>
           <p className="text-sm leading-relaxed">{analysis.overallSummary}</p>
         </Card>
+      )}
+
+      {/* 집·소유자 정보는 사용자가 이미 아는 내용이라 판단에 필요한 것들 뒤로 둔다. */}
+      {(analysis.propertyInfo != null || analysis.ownershipInfo != null) && (
+        <div className="grid gap-4 md:grid-cols-2">
+          {analysis.propertyInfo != null && (
+            <Card title="집 정보" Icon={HomeIcon}>
+              <Property info={analysis.propertyInfo} />
+            </Card>
+          )}
+          {analysis.ownershipInfo != null && (
+            <Card
+              title="소유자 정보"
+              Icon={KeyIcon}
+              trailing={
+                analysis.ownershipInfo.frequentTransferWarning === true ? (
+                  <Chip tone="bg-caution-soft text-caution">잦은 이전</Chip>
+                ) : undefined
+              }
+            >
+              <Ownership info={analysis.ownershipInfo} />
+            </Card>
+          )}
+        </div>
       )}
 
       {/* 등급이 SAFE 가 아니어도 검색이 실패하면 없다. 등급만 보고 존재를 단정하지 않는다. */}

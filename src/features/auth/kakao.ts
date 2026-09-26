@@ -14,6 +14,7 @@ import { env } from "@/shared/config/env";
  * 쓸 수 있는 방식이 다르므로 기억에 의존해 미리 적어 두면 틀린 코드가 남는다.
  *
  * 이 함수가 채워지면 로그인 화면과 서버 교환은 그대로 동작한다 — 둘 다 이미 있다.
+ * **채우면 `shared/config/env.ts` 의 `loginAvailable` 도 함께 바꾼다.** 그래야 감춰 둔 "분석 이력" 메뉴가 나타난다.
  */
 export async function getKakaoAccessToken(): Promise<string> {
   if (env.kakaoJsKey === "") {

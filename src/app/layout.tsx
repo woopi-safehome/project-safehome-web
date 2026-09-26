@@ -15,7 +15,7 @@ const notoSansKr = Noto_Sans_KR({
 });
 
 export const metadata: Metadata = {
-  title: "SafeHome — 등기부등본 안전 분석",
+  title: "등기부 분석 — 계약 전에 등기부등본부터 확인해요",
   description:
     "전세·월세 계약 전에 등기부등본 PDF를 올려 보세요. 보증금에 영향을 줄 수 있는 내용을 AI가 찾아 쉬운 말로 알려 드려요.",
 };

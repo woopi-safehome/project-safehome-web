@@ -5,7 +5,7 @@ import { Faq } from "@/features/guide/components/Faq";
 import { CallToAction } from "@/features/guide/components/CallToAction";
 
 export const metadata: Metadata = {
-  title: "이용 방법 — SafeHome",
+  title: "이용 방법 — 등기부 분석",
   description: "등기부등본 PDF 받는 법, 분석 전에 알아 둘 점, 자주 묻는 질문을 모았어요.",
 };
 

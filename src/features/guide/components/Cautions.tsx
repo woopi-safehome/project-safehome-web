@@ -56,7 +56,7 @@ export function Cautions() {
         id="caution-title"
         eyebrow="알아 두면 좋아요"
         title="분석 전에 알아 두실 것들"
-        description="좋은 등급이 나와도 안심하긴 조금 일러요. SafeHome이 볼 수 있는 것과 볼 수 없는 것을 먼저 말씀드릴게요."
+        description="좋은 등급이 나와도 안심하긴 조금 일러요. 이 서비스가 볼 수 있는 것과 볼 수 없는 것을 먼저 말씀드릴게요."
       />
       <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {CAUTIONS.map(({ Icon, title, body, emphasis }) => (

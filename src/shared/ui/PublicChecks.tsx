@@ -37,7 +37,7 @@ export function PublicChecks({ title = "등기부로 알 수 없는 것도 확�
         {title}
       </h2>
       <p className="mt-1 text-sm leading-relaxed text-muted">
-        아래 내용은 등기부에 나오지 않아서 SafeHome이 판단할 수 없어요. 공공 서비스에서 직접 확인하실 수 있어요.
+        아래 내용은 등기부에 나오지 않아서 이 서비스로는 판단할 수 없어요. 공공 서비스에서 직접 확인하실 수 있어요.
       </p>
       <ul className="mt-4 grid gap-3 md:grid-cols-3">
         {CHECKS.map((c) => (

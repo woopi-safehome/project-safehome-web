@@ -1,9 +1,8 @@
+import Link from "next/link";
 import { DeedUploadForm } from "@/features/analysis/components/DeedUploadForm";
 import { HowItWorks } from "@/features/guide/components/HowItWorks";
 import { CheckCoverage } from "@/features/guide/components/CheckCoverage";
 import { GradeGuide } from "@/features/guide/components/GradeGuide";
-import { Cautions } from "@/features/guide/components/Cautions";
-import { Faq } from "@/features/guide/components/Faq";
 import { CallToAction } from "@/features/guide/components/CallToAction";
 import { HeroIllustration } from "@/shared/ui/illustrations";
 import { ClockIcon, ListCheckIcon, LockIcon } from "@/shared/ui/icons";
@@ -12,8 +11,9 @@ import { card } from "@/shared/ui/styles";
 /**
  * 라우팅과 조립만 한다. 화면의 로직은 features 가 갖는다.
  *
- * 첫 화면은 **바로 분석할 사람**과 **처음 온 사람**을 함께 받는다.
- * 업로드는 맨 위에 두어 한 번에 닿게 하고, 사용법·주의사항은 그 아래로 이어 읽게 한다.
+ * 첫 화면은 "이게 뭐고, 바로 써 볼 수 있나?"에 답한다 — 업로드와 무엇을 봐 주는지까지만 둔다.
+ * 준비물(등기부 받는 법)·주의사항·자주 묻는 질문은 `/guide` 가 갖는다. 같은 구역을 두 페이지에 두면
+ * "이용 방법"을 눌러도 새로운 게 없어 보여서, 한 구역은 한 페이지에만 둔다.
  */
 const TRUST_POINTS = [
   { Icon: LockIcon, label: "회원가입 없이" },
@@ -62,8 +62,13 @@ export default function Home() {
         <HowItWorks />
         <CheckCoverage />
         <GradeGuide />
-        <Cautions />
-        <Faq />
+        <p className="-mt-14 text-sm text-muted">
+          등기부등본 받는 법, 분석 전에 알아 둘 점, 자주 묻는 질문은{" "}
+          <Link href="/guide" className="font-medium text-brand underline-offset-4 hover:underline">
+            이용 방법
+          </Link>
+          에 모아 뒀어요.
+        </p>
         <CallToAction />
       </div>
     </main>

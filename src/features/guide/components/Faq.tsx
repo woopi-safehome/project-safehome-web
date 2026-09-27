@@ -1,3 +1,4 @@
+import { loginAvailable } from "@/shared/config/env";
 import { ChevronDownIcon } from "@/shared/ui/icons";
 import { SectionHeading } from "./SectionHeading";
 
@@ -8,7 +9,10 @@ import { SectionHeading } from "./SectionHeading";
 const FAQ = [
   {
     q: "로그인해야 쓸 수 있나요?",
-    a: "아니요, 로그인 없이 바로 쓰실 수 있어요. 다만 로그인하지 않은 결과는 올린 브라우저에서만 볼 수 있어서, 창을 닫거나 쿠키를 지우면 다시 찾기 어려워요. 기록을 남겨 두고 싶으시면 로그인해 주세요.",
+    // 로그인이 되지 않는 동안에는 로그인을 권하지 않는다 — 막다른 곳으로 보내게 된다.
+    a: loginAvailable
+      ? "아니요, 로그인 없이 바로 쓰실 수 있어요. 다만 로그인하지 않은 결과는 올린 브라우저에서만 볼 수 있어서, 주소를 잃거나 쿠키를 지우면 다시 찾기 어려워요. 기록을 남겨 두고 싶으시면 로그인해 주세요."
+      : "아니요, 로그인 없이 바로 쓰실 수 있어요. 다만 결과는 올린 브라우저에서만 열리고 목록으로 모아 두지 않아서, 주소를 잃거나 쿠키를 지우면 다시 찾기 어려워요. 다시 보실 결과는 즐겨찾기해 두세요.",
   },
   {
     q: "올린 PDF 파일은 저장되나요?",

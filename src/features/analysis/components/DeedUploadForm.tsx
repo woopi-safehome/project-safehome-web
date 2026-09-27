@@ -4,6 +4,7 @@ import { useState, type DragEvent } from "react";
 import { useRouter } from "next/navigation";
 import { ERROR_CODE, type LeaseType } from "@/shared/api/contract";
 import { ApiError } from "@/shared/api/client";
+import { loginAvailable } from "@/shared/config/env";
 import { AlertIcon, DocumentIcon, LockIcon, UploadIcon } from "@/shared/ui/icons";
 import { buttonPrimary } from "@/shared/ui/styles";
 import { uploadDeed } from "../api";
@@ -173,7 +174,10 @@ export function DeedUploadForm() {
       <p className="flex items-start justify-center gap-1.5 text-center text-xs leading-relaxed text-muted">
         <LockIcon width={14} height={14} className="mt-0.5 shrink-0" />
         <span>
-          로그인하지 않아도 분석할 수 있어요. 로그인하면 지난 분석을 다시 볼 수 있고요.
+          {/* 로그인이 되지 않는 동안에는 로그인으로 얻는 것을 약속하지 않는다. */}
+          {loginAvailable
+            ? "로그인하지 않아도 분석할 수 있어요. 로그인하면 지난 분석을 다시 볼 수 있고요."
+            : "로그인이나 회원가입 없이 바로 분석할 수 있어요."}
           <br />
           올려 주신 PDF 원본은 분석에만 쓰고 따로 보관하지 않아요.
         </span>

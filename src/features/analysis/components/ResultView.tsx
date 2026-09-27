@@ -403,8 +403,9 @@ function Analysis({ analysis }: { analysis: DeedAnalysis }) {
         </Card>
       )}
 
+      {/* 계약 뒤에 할 일(확정일자·입주 당일 전입신고 등)도 섞여 온다. "계약 전"으로 묶으면 틀린 안내가 된다. */}
       {analysis.recommendations != null && analysis.recommendations.length > 0 && (
-        <Card title="계약 전에 해 두면 좋은 일" Icon={CheckCircleIcon}>
+        <Card title="계약 전후로 챙길 일" Icon={CheckCircleIcon}>
           <Recommendations items={analysis.recommendations} />
         </Card>
       )}

@@ -463,7 +463,7 @@ function Analysis({ analysis }: { analysis: DeedAnalysis }) {
 }
 
 export function ResultView({ jobId }: { jobId: string }) {
-  const { job, loading, error, reload } = useResult(jobId);
+  const { job, loading, error, retryable, reload } = useResult(jobId);
 
   if (loading) {
     return (
@@ -492,10 +492,13 @@ export function ResultView({ jobId }: { jobId: string }) {
           {message}
         </p>
         <div className="flex flex-wrap justify-center gap-2">
-          <button type="button" onClick={reload} className={buttonPrimary}>
-            <RefreshIcon width={18} height={18} />
-            다시 시도
-          </button>
+          {/* 권한이 없으면 다시 불러와도 같다. 새로 분석하는 길만 준다. */}
+          {retryable && (
+            <button type="button" onClick={reload} className={buttonPrimary}>
+              <RefreshIcon width={18} height={18} />
+              다시 시도
+            </button>
+          )}
           <HomeLink />
         </div>
       </div>

@@ -239,4 +239,14 @@ describe("ResultView", () => {
 
     await waitFor(() => expect(screen.getByText("두 번째엔 성공")).toBeTruthy());
   });
+
+  it("다른 브라우저에서 열어 권한이 없으면 서버 오류가 아니라 이유를 알리고, 다시 시도는 내놓지 않는다", async () => {
+    // 비회원 결과는 업로드한 브라우저에서만 열린다(api 가 403). 고장처럼 보이면 사용자가 서비스를 믿지 못한다.
+    getJobMock.mockRejectedValue(new ApiError("FORBIDDEN", "접근 권한이 없습니다.", 403));
+    render(<ResultView jobId="j1" />);
+
+    expect((await screen.findByRole("alert")).textContent).toBe("이 결과는 분석한 브라우저에서만 볼 수 있어요.");
+    expect(screen.queryByRole("button", { name: "다시 시도" })).toBeNull();
+    expect(screen.getByRole("link", { name: /새로 분석하기/ })).toBeTruthy();
+  });
 });

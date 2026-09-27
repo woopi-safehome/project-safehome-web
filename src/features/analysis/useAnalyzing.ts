@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { ApiError } from "@/shared/api/client";
+import { FORBIDDEN_MESSAGE } from "./useResult";
 import { streamJobEvents } from "@/shared/api/stream";
 import type { AnalysisStep } from "@/shared/api/contract";
 import { getJob, type DeedJob } from "./api";
@@ -57,6 +58,7 @@ function sleep(ms: number, signal: AbortSignal): Promise<void> {
 function messageOf(e: unknown): string {
   if (e instanceof ApiError) {
     if (e.code === "NETWORK_ERROR") return "네트워크 연결을 확인하세요.";
+    if (e.status === 403) return FORBIDDEN_MESSAGE;
     return `서버 오류가 발생했습니다. (${e.status})`;
   }
   return "알 수 없는 오류가 발생했습니다.";

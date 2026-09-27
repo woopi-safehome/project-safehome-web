@@ -46,27 +46,28 @@ type Icon = ComponentType<SVGProps<SVGSVGElement>>;
  * 등급별 표시. '안전'을 "계약해도 된다"로 읽지 않도록 설명을 단정하지 않는다 —
  * 등기부 밖의 위험은 보지 못하기 때문이다.
  */
+// 뜻과 할 일은 첫 화면의 등급 안내(guide/GradeGuide)와 맞춘다. 여기는 항목이 바로 아래 있으므로 '어떤 경우인지' 예시 대신 항목을 가리킨다.
 const SAFETY: Record<SafetyLevel, { label: string; desc: string; next: string; Icon: Icon; tone: string; iconTone: string }> = {
   SAFE: {
     label: "안전",
-    desc: "등기부에서는 걱정할 만한 내용이 보이지 않았어요",
-    next: "그래도 등기부에 안 나오는 위험(먼저 사는 세입자, 세금 체납, 시세)은 아래 공공 서비스에서 따로 확인해 주세요.",
+    desc: "등기부에서는 걱정할 만한 기록을 찾지 못했어요",
+    next: "등기부에 안 나오는 위험은 따로 확인해 주세요. 먼저 사는 세입자, 집주인의 밀린 세금, 시세는 아래 공공 서비스에서 볼 수 있어요. 잔금 전에 등기부를 한 번 더 떼어 보는 것도 잊지 마세요.",
     Icon: ShieldCheckIcon,
     tone: "border-safe/25 bg-safe-soft",
     iconTone: "bg-safe text-surface",
   },
   CAUTION: {
     label: "주의",
-    desc: "한번 따져 봐야 할 내용이 있어요",
-    next: "아래 ‘주의’ 항목의 금액과 순서를 내 보증금과 비교해 보고, 중개사에게 설명을 부탁해 보세요.",
+    desc: "당장 문제는 아니어도 따져 볼 권리가 있어요",
+    next: "아래 ‘주의’ 항목을 확인해 주세요. 근저당이 있다면 그 금액에 내 보증금을 더해 집값과 견줘 보고, 잔금 때 갚기로 했다면 말소 조건을 계약서 특약에 적어 두세요.",
     Icon: InfoIcon,
     tone: "border-caution/25 bg-caution-soft",
     iconTone: "bg-caution text-surface",
   },
   DANGER: {
     label: "위험",
-    desc: "보증금을 잃을 수 있는 내용이 있어요",
-    next: "계약은 잠시 멈추고, 아래 ‘위험’ 항목을 법률 전문가에게 꼭 확인받아 보세요.",
+    desc: "보증금을 잃을 수 있는 기록이 있어요",
+    next: "계약금을 보내기 전에 멈추세요. 아래 ‘위험’ 항목이 무엇인지 법률 전문가에게 꼭 확인받고, 설명 없이 계약을 서두르면 더 조심하세요.",
     Icon: AlertIcon,
     tone: "border-danger/25 bg-danger-soft",
     iconTone: "bg-danger text-surface",

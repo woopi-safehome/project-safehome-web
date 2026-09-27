@@ -6,6 +6,7 @@ import { SectionHeading } from "./SectionHeading";
  * 등급 읽는 법. 등급을 정하는 것은 서버다 — 여기는 뜻과 **다음에 할 일**만 설명한다.
  * '어떤 경우인지'의 예시는 분석 서버 판정 규칙(ai-api judgment.py)과 맞춘다. 규칙이 바뀌면 여기도 본다 —
  * 예시가 어긋나면 결과에서 '위험'을 받은 사용자가 안내와 다르다고 느낀다.
+ * 뜻과 할 일은 결과 화면의 등급 카드(analysis/ResultView 의 SAFETY)와 같은 말로 쓴다.
  * '안전'을 "계약해도 된다"로 읽지 않도록 모든 등급에 할 일을 붙인다.
  */
 const GRADES = [

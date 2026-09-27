@@ -48,7 +48,7 @@ describe("ResultView", () => {
     render(<ResultView jobId="j1" />);
 
     await waitFor(() => expect(screen.getByText("위험")).toBeTruthy());
-    expect(screen.getByText("보증금을 잃을 수 있는 내용이 있어요")).toBeTruthy();
+    expect(screen.getByText("보증금을 잃을 수 있는 기록이 있어요")).toBeTruthy();
   });
 
   it("등급이 없으면 등급 영역을 비운다", async () => {

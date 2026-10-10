@@ -244,7 +244,7 @@ fetch 로 열고 본문 스트림을 직접 읽는다.
 ### 이 앱이 놓이는 자리
 
 ```
-브라우저 ──▶ nginx (safehome.devupii.store)
+브라우저 ──▶ Caddy (safehome.devupii.store)
                 ├─ /api/  ──▶ API        :8080
                 └─ /      ──▶ 이 앱       :3000
 ```
@@ -255,8 +255,25 @@ fetch 로 열고 본문 스트림을 직접 읽는다.
 쿠키(`Secure`·`path=/api`)가 그대로 실린다. 이 배치가 깨지면 **에러 없이** 업로드한 사람이
 자기 결과를 못 보게 된다.
 
-nginx 설정의 원본은 [`docker/dev/nginx/safehome.conf`](docker/dev/nginx/safehome.conf) 다.
-서버의 `/etc/nginx/sites-available/safehome` 은 사본이므로 **서버에서만 고치지 않는다.**
+앞단은 서버에 직접 설치된 **공용 Caddy** 다(다른 프로젝트와 함께 쓴다). 이 앱은 사이트 파일 하나만 맡고,
+원본은 [`docker/dev/caddy/safehome.caddy`](docker/dev/caddy/safehome.caddy) 다.
+서버의 `/etc/caddy/sites/safehome.caddy` 는 사본이므로 **서버에서만 고치지 않는다.**
+공용 `/etc/caddy/Caddyfile`(전역 설정과 `import /etc/caddy/sites/*.caddy` 만 둔다)은 이 저장소가 고치지 않는다.
+인증서는 Caddy 가 자동으로 받는다 — certbot 을 쓰지 않는다.
+
+#### 사이트 파일을 바꿨을 때
+
+배포가 사이트 파일을 `/home/woopi/project/safehome/web/caddy/` 까지 올려 두지만 **설치는 하지 않는다**
+(root 가 필요하다 — 이유는 워크플로 주석). 공용 Caddy 가 설치된 서버에서 사람이 옮긴다.
+
+```bash
+sudo cp /home/woopi/project/safehome/web/caddy/safehome.caddy /etc/caddy/sites/safehome.caddy
+sudo caddy validate --config /etc/caddy/Caddyfile
+sudo systemctl reload caddy
+```
+
+`validate` 를 건너뛰지 않는다. 사이트 파일 하나의 오류가 공용 설정 전체의 reload 를 막아,
+같은 Caddy 를 쓰는 다른 프로젝트까지 새 설정을 못 받는다.
 
 ### 서버에 처음 올릴 때
 
@@ -265,7 +282,7 @@ nginx 설정의 원본은 [`docker/dev/nginx/safehome.conf`](docker/dev/nginx/sa
 1. **DNS 레코드.** 이 도메인의 다른 호스트와 같은 모양으로 만든다 —
    **DDNS 이름을 가리키는 CNAME** 이다. IP 를 직접 적는 A 레코드로 만들면
    공인 IP 가 바뀌는 날 이 호스트만 죽는다. 와일드카드가 없어 호스트마다 하나씩 필요하다.
-2. nginx 설정 배치 후 `sudo certbot --nginx -d safehome.devupii.store`
+2. 공용 Caddy 가 설치된 뒤 위 "사이트 파일을 바꿨을 때" 순서로 사이트 파일을 넣는다. 인증서는 그 reload 때 Caddy 가 받으므로 1번 DNS 가 먼저 이 서버를 가리켜야 한다
 3. `/home/woopi/project/safehome/env/.env_web` 에 `GITHUB_OWNER=` 한 줄
 
 ---
